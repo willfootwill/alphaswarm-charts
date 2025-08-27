@@ -4,7 +4,9 @@ A JavaScript library for creating **footswarm charts** - distribution visualizat
 
 Footswarm charts combine the benefits of scatter plots (showing individual data points) with the statistical insights of box plots (showing distribution summaries), making them ideal for exploring distributions while maintaining visibility of individual observations.
 
-![Footswarm Chart Example](docs/images/footswarm-example.png)
+**[🔗 View Live Interactive Demo](https://willfootwill.github.io/footswarm-charts/demo.html)**
+
+![Footswarm Chart Example](https://willfootwill.github.io/footswarm-charts/demo.html)
 
 ## Features
 
