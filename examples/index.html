@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Footswarm Charts - Examples</title>
+    <script type="module">
+        // Import and make Observable Plot and D3 available globally
+        import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+        import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+        window.Plot = Plot;
+        window.d3 = d3;
+    </script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -210,24 +217,6 @@
             </div>
             
             <div class="stats-summary" id="simple-stats"></div>
-            
-            <div class="code-example">
-<pre>import { createFootswarmChart } from './src/footswarm.js';
-import { simpleData } from './data/sample-datasets.js';
-
-const chart = createFootswarmChart(simpleData, {
-    x: 'value',
-    y: 'category',
-    xLabel: 'Value',
-    yLabel: 'Groups',
-    opacity: 0.6,
-    jitter: 0.5,
-    showMean: true,
-    showMedian: true
-});
-
-document.getElementById('chart-container').appendChild(chart);</pre>
-            </div>
         </div>
         
         <!-- Meeting Time Analysis -->

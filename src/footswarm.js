@@ -7,8 +7,17 @@
  * Based on Observable Plot and inspired by swarm plots and beeswarm charts.
  */
 
-import * as Plot from "@observablehq/plot";
-import * as d3 from "d3";
+// Use globally available Plot and d3 (loaded via CDN)
+const Plot = window.Plot;
+const d3 = window.d3;
+
+// Add error checking for dependencies
+if (!Plot) {
+    throw new Error('Observable Plot is not available. Make sure it is loaded before this script.');
+}
+if (!d3) {
+    throw new Error('D3 is not available. Make sure it is loaded before this script.');
+}
 
 /**
  * Calculate basic statistics for a dataset
@@ -78,169 +87,145 @@ export function generateJitter(count, jitter = 0.5, method = 'random') {
  * @returns {Object} Observable Plot object
  */
 export function createFootswarmChart(data, options = {}) {
-    const {
-        x = "value",                    // x-axis field name
-        y = "category",                 // y-axis field name (for grouping)
-        width = 800,
-        height = 400,
-        marginLeft = 100,
-        marginRight = 40,
-        marginTop = 20,
-        marginBottom = 40,
-        opacity = 0.6,
-        jitter = 0.5,
-        jitterMethod = 'random',
-        pointRadius = 4,
-        pointColor = "#4285f4",
-        showMean = true,
-        showMedian = true,
-        showTooltips = false,
-        xLabel = null,
-        yLabel = null,
-        xDomain = null,
-        title = null
-    } = options;
-
-    // Prepare data with jittered y-coordinates
-    const processedData = [];
-    const categories = [...new Set(data.map(d => d[y]))];
-    
-    categories.forEach(category => {
-        const categoryData = data.filter(d => d[y] === category);
-        const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod);
+    try {
+        console.log('🔧 Creating footswarm chart with data:', data.slice(0, 3));
+        console.log('🔧 Chart options:', options);
         
-        categoryData.forEach((d, i) => {
-            processedData.push({
-                ...d,
-                jitteredY: jitterCoords[i],
-                originalCategory: d[y]
+        const {
+            x = "value",                    // x-axis field name
+            y = "category",                 // y-axis field name (for grouping)
+            width = 800,
+            height = 400,
+            marginLeft = 100,
+            marginRight = 40,
+            marginTop = 20,
+            marginBottom = 40,
+            opacity = 0.6,
+            jitter = 0.5,
+            jitterMethod = 'random',
+            pointRadius = 4,
+            pointColor = "#4285f4",
+            showMean = true,
+            showMedian = true,
+            showTooltips = false,
+            xLabel = null,
+            yLabel = null,
+            xDomain = null,
+            title = null
+        } = options;
+
+        // Validate data
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            throw new Error('Data must be a non-empty array');
+        }
+
+        // Prepare data with jittered y-coordinates
+        const processedData = [];
+        const categories = [...new Set(data.map(d => d[y]))];
+        
+        console.log('🏷️ Categories found:', categories);
+        
+        categories.forEach(category => {
+            const categoryData = data.filter(d => d[y] === category);
+            const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod);
+            
+            categoryData.forEach((d, i) => {
+                processedData.push({
+                    ...d,
+                    jitteredY: jitterCoords[i],
+                    originalCategory: d[y]
+                });
             });
         });
-    });
 
-    // Calculate statistics for each category
-    const statsData = categories.map(category => {
-        const categoryData = data.filter(d => d[y] === category);
-        const values = categoryData.map(d => d[x]);
-        const stats = calculateStats(values);
-        return {
-            category,
-            ...stats
+        console.log('📊 Processed data sample:', processedData.slice(0, 3));
+
+        // Calculate statistics for each category
+        const statsData = categories.map(category => {
+            const categoryData = data.filter(d => d[y] === category);
+            const values = categoryData.map(d => d[x]);
+            const stats = calculateStats(values);
+            return {
+                category,
+                ...stats
+            };
+        });
+
+        console.log('📈 Stats data:', statsData);
+
+        // Start with a simple chart - just dots
+        const marks = [
+            Plot.dot(processedData, {
+                x: x,
+                y: d => d.jitteredY,
+                fy: "originalCategory",
+                fill: pointColor,
+                fillOpacity: opacity,
+                r: pointRadius
+            })
+        ];
+
+        // Add mean lines if requested
+        if (showMean && statsData.length > 0) {
+            marks.push(
+                Plot.ruleX(statsData, {
+                    x: "mean",
+                    fy: "category",
+                    stroke: "#ff6b6b",
+                    strokeWidth: 2
+                })
+            );
+        }
+
+        // Add median lines if requested
+        if (showMedian && statsData.length > 0) {
+            marks.push(
+                Plot.ruleX(statsData, {
+                    x: "median",
+                    fy: "category",
+                    stroke: "#4ecdc4",
+                    strokeWidth: 2
+                })
+            );
+        }
+
+        console.log('🎨 Creating plot with marks:', marks.length);
+
+        const plotConfig = {
+            width,
+            height,
+            marginLeft,
+            marginRight,
+            marginTop,
+            marginBottom,
+            x: {
+                label: xLabel,
+                grid: true,
+                nice: true
+            },
+            fy: {
+                label: yLabel,
+                domain: categories,
+                padding: 0.1
+            },
+            y: {
+                domain: [-1, 1],
+                axis: null
+            },
+            marks
         };
-    });
 
-    // Create marks array
-    const marks = [];
+        console.log('⚙️ Plot config:', plotConfig);
 
-    // Background lines at y=0 for each category
-    marks.push(
-        Plot.ruleY(categories.map(cat => ({ category: cat, y: 0 })), {
-            y: d => d.category,
-            stroke: "#f0f0f0",
-            strokeWidth: 1
-        })
-    );
-
-    // Data points with jittering
-    marks.push(
-        Plot.dot(processedData, {
-            x: x,
-            y: d => d.jitteredY,
-            fy: "originalCategory",
-            fill: pointColor,
-            fillOpacity: opacity,
-            stroke: "none",
-            r: pointRadius,
-            tip: showTooltips,
-            title: showTooltips ? d => `${d[x]?.toFixed?.(2) || d[x]}` : undefined
-        })
-    );
-
-    // Mean lines
-    if (showMean) {
-        marks.push(
-            Plot.ruleX(statsData, {
-                x: "mean",
-                fy: "category",
-                stroke: "#ff6b6b",
-                strokeWidth: 2,
-                strokeDasharray: "5,5"
-            })
-        );
-
-        // Mean labels
-        marks.push(
-            Plot.text(statsData, {
-                x: "mean",
-                y: 0.7,
-                fy: "category",
-                text: "Mean",
-                fill: "#ff6b6b",
-                fontSize: 10,
-                fontWeight: "bold",
-                textAnchor: "start",
-                dx: 5
-            })
-        );
+        const plot = Plot.plot(plotConfig);
+        console.log('✅ Plot created successfully');
+        
+        return plot;
+        
+    } catch (error) {
+        console.error('❌ Error in createFootswarmChart:', error);
+        throw error;
     }
-
-    // Median lines
-    if (showMedian) {
-        marks.push(
-            Plot.ruleX(statsData, {
-                x: "median",
-                fy: "category",
-                stroke: "#4ecdc4",
-                strokeWidth: 2,
-                strokeDasharray: "10,2"
-            })
-        );
-
-        // Median labels
-        marks.push(
-            Plot.text(statsData, {
-                x: "median",
-                y: -0.7,
-                fy: "category",
-                text: "Median",
-                fill: "#4ecdc4",
-                fontSize: 10,
-                fontWeight: "bold",
-                textAnchor: "end",
-                dx: -5
-            })
-        );
-    }
-
-    // Zero line
-    marks.push(Plot.ruleX([0]));
-
-    return Plot.plot({
-        width,
-        height,
-        marginLeft,
-        marginRight,
-        marginTop,
-        marginBottom,
-        title,
-        x: {
-            label: xLabel,
-            grid: true,
-            domain: xDomain,
-            nice: true
-        },
-        fy: {
-            label: yLabel,
-            domain: categories,
-            padding: 0.1
-        },
-        y: {
-            domain: [-1, 1],
-            ticks: [],
-            axis: null
-        },
-        marks
-    });
 }
 
 /**
@@ -250,139 +235,145 @@ export function createFootswarmChart(data, options = {}) {
  * @returns {Object} Observable Plot object
  */
 export function createVerticalFootswarmChart(data, options = {}) {
-    const {
-        x = "category",                 // x-axis field name (for grouping)
-        y = "value",                    // y-axis field name
-        width = 600,
-        height = 400,
-        marginLeft = 60,
-        marginRight = 40,
-        marginTop = 20,
-        marginBottom = 60,
-        opacity = 0.6,
-        jitter = 0.5,
-        jitterMethod = 'random',
-        pointRadius = 4,
-        pointColor = "#4285f4",
-        showMean = true,
-        showMedian = true,
-        showTooltips = false,
-        xLabel = null,
-        yLabel = null,
-        yDomain = null,
-        title = null
-    } = options;
-
-    // Prepare data with jittered x-coordinates
-    const processedData = [];
-    const categories = [...new Set(data.map(d => d[x]))];
-    
-    categories.forEach(category => {
-        const categoryData = data.filter(d => d[x] === category);
-        const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod);
+    try {
+        console.log('🔧 Creating vertical footswarm chart with data:', data.slice(0, 3));
+        console.log('🔧 Vertical chart options:', options);
         
-        categoryData.forEach((d, i) => {
-            processedData.push({
-                ...d,
-                jitteredX: jitterCoords[i],
-                originalCategory: d[x]
+        const {
+            x = "category",                 // x-axis field name (for grouping)
+            y = "value",                    // y-axis field name
+            width = 600,
+            height = 400,
+            marginLeft = 60,
+            marginRight = 40,
+            marginTop = 20,
+            marginBottom = 60,
+            opacity = 0.6,
+            jitter = 0.5,
+            jitterMethod = 'random',
+            pointRadius = 4,
+            pointColor = "#4285f4",
+            showMean = true,
+            showMedian = true,
+            showTooltips = false,
+            xLabel = null,
+            yLabel = null,
+            yDomain = null,
+            title = null
+        } = options;
+
+        // Validate data
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            throw new Error('Data must be a non-empty array');
+        }
+
+        // Prepare data with jittered x-coordinates
+        const processedData = [];
+        const categories = [...new Set(data.map(d => d[x]))];
+        
+        console.log('🏷️ Vertical chart categories found:', categories);
+        
+        categories.forEach(category => {
+            const categoryData = data.filter(d => d[x] === category);
+            const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod);
+            
+            categoryData.forEach((d, i) => {
+                processedData.push({
+                    ...d,
+                    jitteredX: jitterCoords[i],
+                    originalCategory: d[x]
+                });
             });
         });
-    });
 
-    // Calculate statistics for each category
-    const statsData = categories.map(category => {
-        const categoryData = data.filter(d => d[x] === category);
-        const values = categoryData.map(d => d[y]);
-        const stats = calculateStats(values);
-        return {
-            category,
-            ...stats
+        console.log('📊 Vertical processed data sample:', processedData.slice(0, 3));
+
+        // Calculate statistics for each category
+        const statsData = categories.map(category => {
+            const categoryData = data.filter(d => d[x] === category);
+            const values = categoryData.map(d => d[y]);
+            const stats = calculateStats(values);
+            return {
+                category,
+                ...stats
+            };
+        });
+
+        console.log('📈 Vertical stats data:', statsData);
+
+        // Start with a simple chart - just dots
+        const marks = [
+            Plot.dot(processedData, {
+                x: d => d.jitteredX,
+                y: y,
+                fx: "originalCategory",
+                fill: pointColor,
+                fillOpacity: opacity,
+                r: pointRadius
+            })
+        ];
+
+        // Add mean lines if requested
+        if (showMean && statsData.length > 0) {
+            marks.push(
+                Plot.ruleY(statsData, {
+                    y: "mean",
+                    fx: "category",
+                    stroke: "#ff6b6b",
+                    strokeWidth: 2
+                })
+            );
+        }
+
+        // Add median lines if requested
+        if (showMedian && statsData.length > 0) {
+            marks.push(
+                Plot.ruleY(statsData, {
+                    y: "median",
+                    fx: "category",
+                    stroke: "#4ecdc4",
+                    strokeWidth: 2
+                })
+            );
+        }
+
+        console.log('🎨 Creating vertical plot with marks:', marks.length);
+
+        const plotConfig = {
+            width,
+            height,
+            marginLeft,
+            marginRight,
+            marginTop,
+            marginBottom,
+            y: {
+                label: yLabel,
+                grid: true,
+                nice: true
+            },
+            fx: {
+                label: xLabel,
+                domain: categories,
+                padding: 0.1
+            },
+            x: {
+                domain: [-1, 1],
+                axis: null
+            },
+            marks
         };
-    });
 
-    // Create marks array
-    const marks = [];
+        console.log('⚙️ Vertical plot config:', plotConfig);
 
-    // Background lines at x=0 for each category
-    marks.push(
-        Plot.ruleX(categories.map(cat => ({ category: cat, x: 0 })), {
-            x: d => d.category,
-            stroke: "#f0f0f0",
-            strokeWidth: 1
-        })
-    );
-
-    // Data points with jittering
-    marks.push(
-        Plot.dot(processedData, {
-            x: d => d.jitteredX,
-            y: y,
-            fx: "originalCategory",
-            fill: pointColor,
-            fillOpacity: opacity,
-            stroke: "none",
-            r: pointRadius,
-            tip: showTooltips,
-            title: showTooltips ? d => `${d[y]?.toFixed?.(2) || d[y]}` : undefined
-        })
-    );
-
-    // Mean lines
-    if (showMean) {
-        marks.push(
-            Plot.ruleY(statsData, {
-                y: "mean",
-                fx: "category",
-                stroke: "#ff6b6b",
-                strokeWidth: 2,
-                strokeDasharray: "5,5"
-            })
-        );
+        const plot = Plot.plot(plotConfig);
+        console.log('✅ Vertical plot created successfully');
+        
+        return plot;
+        
+    } catch (error) {
+        console.error('❌ Error in createVerticalFootswarmChart:', error);
+        throw error;
     }
-
-    // Median lines
-    if (showMedian) {
-        marks.push(
-            Plot.ruleY(statsData, {
-                y: "median",
-                fx: "category",
-                stroke: "#4ecdc4",
-                strokeWidth: 2,
-                strokeDasharray: "10,2"
-            })
-        );
-    }
-
-    // Zero line
-    marks.push(Plot.ruleY([0]));
-
-    return Plot.plot({
-        width,
-        height,
-        marginLeft,
-        marginRight,
-        marginTop,
-        marginBottom,
-        title,
-        y: {
-            label: yLabel,
-            grid: true,
-            domain: yDomain,
-            nice: true
-        },
-        fx: {
-            label: xLabel,
-            domain: categories,
-            padding: 0.1
-        },
-        x: {
-            domain: [-1, 1],
-            ticks: [],
-            axis: null
-        },
-        marks
-    });
 }
 
 /**

@@ -2,14 +2,43 @@
  * Interactive examples for footswarm charts
  */
 
-import { createFootswarmChart, createVerticalFootswarmChart, calculateStats } from '../src/footswarm.js';
-import { 
+// Add error handling for imports
+let footswarmModule, dataModule;
+
+try {
+    footswarmModule = await import('../src/footswarm.js');
+    dataModule = await import('../data/sample-datasets.js');
+    console.log('✅ Modules loaded successfully');
+} catch (error) {
+    console.error('❌ Error loading modules:', error);
+    document.body.innerHTML = `<div style="padding: 20px; color: red; font-family: monospace;">
+        <h2>Error Loading Modules</h2>
+        <p>Failed to load required modules. Please check the console for details.</p>
+        <pre>${error.message}</pre>
+    </div>`;
+    throw error;
+}
+
+const { createFootswarmChart, createVerticalFootswarmChart, calculateStats } = footswarmModule;
+const { 
     simpleData, 
     meetingTimeData, 
     performanceData, 
     responseTimeData, 
     salesData 
-} from '../data/sample-datasets.js';
+} = dataModule;
+
+// Check if dependencies are available
+if (!window.Plot || !window.d3) {
+    console.error('❌ Observable Plot or D3 not available globally');
+    document.body.innerHTML = `<div style="padding: 20px; color: red; font-family: monospace;">
+        <h2>Missing Dependencies</h2>
+        <p>Observable Plot and D3 must be loaded before this script.</p>
+    </div>`;
+    throw new Error('Missing dependencies: Plot or d3');
+}
+
+console.log('✅ Dependencies available:', { Plot: !!window.Plot, d3: !!window.d3 });
 
 // Chart instances to track for updates
 const charts = {};
@@ -66,54 +95,77 @@ function setupControls(prefix, data, valueField, categoryField, chartType = 'hor
     
     // Update chart function
     function updateChart() {
-        const options = {
-            x: valueField,
-            y: categoryField,
-            opacity: parseFloat(opacitySlider.value),
-            jitter: parseFloat(jitterSlider.value),
-            showMean: meanCheckbox.checked,
-            showMedian: medianCheckbox.checked,
-            showTooltips: true,
-            width: 800,
-            height: Math.max(300, [...new Set(data.map(d => d[categoryField]))].length * 80)
-        };
-        
-        // Set appropriate labels based on dataset
-        if (prefix === 'simple') {
-            options.xLabel = 'Value';
-            options.yLabel = 'Groups';
-        } else if (prefix === 'meeting') {
-            options.xLabel = 'Daily Meeting Hours';
-            options.yLabel = 'Developer Level';
-        } else if (prefix === 'performance') {
-            options.xLabel = 'Performance Score';
-            options.yLabel = 'Team';
-        } else if (prefix === 'response') {
-            options.xLabel = 'Response Time (ms)';
-            options.yLabel = 'Day of Week';
-        } else if (prefix === 'vertical') {
-            options.xLabel = 'Region';
-            options.yLabel = 'Sales ($)';
-            options.x = categoryField;
-            options.y = valueField;
+        try {
+            console.log(`🔄 Updating chart: ${prefix}`, { 
+                dataLength: data.length, 
+                valueField, 
+                categoryField,
+                sampleData: data.slice(0, 3)
+            });
+            
+            const options = {
+                x: valueField,
+                y: categoryField,
+                opacity: parseFloat(opacitySlider.value),
+                jitter: parseFloat(jitterSlider.value),
+                showMean: meanCheckbox.checked,
+                showMedian: medianCheckbox.checked,
+                showTooltips: true,
+                width: 800,
+                height: Math.max(300, [...new Set(data.map(d => d[categoryField]))].length * 80)
+            };
+            
+            // Set appropriate labels based on dataset
+            if (prefix === 'simple') {
+                options.xLabel = 'Value';
+                options.yLabel = 'Groups';
+            } else if (prefix === 'meeting') {
+                options.xLabel = 'Daily Meeting Hours';
+                options.yLabel = 'Developer Level';
+            } else if (prefix === 'performance') {
+                options.xLabel = 'Performance Score';
+                options.yLabel = 'Team';
+            } else if (prefix === 'response') {
+                options.xLabel = 'Response Time (ms)';
+                options.yLabel = 'Day of Week';
+            } else if (prefix === 'vertical') {
+                options.xLabel = 'Region';
+                options.yLabel = 'Sales ($)';
+                options.x = categoryField;
+                options.y = valueField;
+            }
+            
+            console.log(`📊 Chart options for ${prefix}:`, options);
+            
+            // Clear previous chart
+            chartContainer.innerHTML = '';
+            
+            // Create new chart
+            let chart;
+            if (chartType === 'vertical') {
+                console.log(`📈 Creating vertical chart for ${prefix}`);
+                chart = createVerticalFootswarmChart(data, options);
+            } else {
+                console.log(`📈 Creating horizontal chart for ${prefix}`);
+                chart = createFootswarmChart(data, options);
+            }
+            
+            chartContainer.appendChild(chart);
+            charts[prefix] = chart;
+            
+            // Update stats
+            statsContainer.innerHTML = generateStatsSummary(data, valueField, categoryField);
+            
+            console.log(`✅ Chart ${prefix} created successfully`);
+            
+        } catch (error) {
+            console.error(`❌ Error creating chart ${prefix}:`, error);
+            chartContainer.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
+                <strong>Error creating chart:</strong><br>
+                ${error.message}<br>
+                <small>Check console for details</small>
+            </div>`;
         }
-        
-        // Clear previous chart
-        chartContainer.innerHTML = '';
-        
-        // Create new chart
-        let chart;
-        if (chartType === 'vertical') {
-            chart = createVerticalFootswarmChart(data, options);
-        } else {
-            chart = createFootswarmChart(data, options);
-        }
-        
-        chartContainer.appendChild(chart);
-        charts[prefix] = chart;
-        
-        // Update stats
-        statsContainer.innerHTML = generateStatsSummary(data, valueField, categoryField);
     }
     
     // Event listeners
