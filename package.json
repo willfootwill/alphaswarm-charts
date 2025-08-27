@@ -1,0 +1,39 @@
+{
+  "name": "footswarm-charts",
+  "version": "1.0.0",
+  "description": "A JavaScript library for creating footswarm charts - distribution visualizations that show individual data points with statistical overlays",
+  "main": "src/footswarm.js",
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'Build process - copy files to dist/'",
+    "test": "echo 'Tests would go here'"
+  },
+  "keywords": [
+    "data-visualization",
+    "charts",
+    "distribution",
+    "statistics",
+    "d3",
+    "observable-plot",
+    "swarm-plot",
+    "footswarm"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "d3": "^7.8.5",
+    "@observablehq/plot": "^0.6.11"
+  },
+  "devDependencies": {
+    "vite": "^4.4.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/footswarm-charts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/footswarm-charts/issues"
+  },
+  "homepage": "https://github.com/yourusername/footswarm-charts#readme"
+}

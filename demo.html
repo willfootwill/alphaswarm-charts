@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footswarm Charts - Quick Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .demo-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        
+        .controls label {
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .chart-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-line {
+            width: 20px;
+            height: 2px;
+        }
+        
+        .mean-line {
+            background: #ff6b6b;
+            border-top: 2px dashed #ff6b6b;
+        }
+        
+        .median-line {
+            background: #4ecdc4;
+            border-top: 2px dashed #4ecdc4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Footswarm Charts - Quick Demo</h1>
+    <p>This demo shows the footswarm chart library in action with a simple dataset.</p>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-line mean-line"></div>
+            <span>Mean</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-line median-line"></div>
+            <span>Median</span>
+        </div>
+    </div>
+    
+    <div class="demo-section">
+        <h2>Enhanced Example: Test Scores by Subject</h2>
+        <p>This chart shows individual student test scores across five subjects (370 students total). Each dot represents one student's score.</p>
+        
+        <div class="controls">
+            <label>
+                Opacity: <span id="opacity-value">0.6</span>
+                <input type="range" id="opacity-slider" min="0.1" max="1" step="0.1" value="0.6">
+            </label>
+            <label>
+                Jitter: <span id="jitter-value">0.5</span>
+                <input type="range" id="jitter-slider" min="0" max="1" step="0.1" value="0.5">
+            </label>
+            <label>
+                <input type="checkbox" id="show-mean" checked> Show Mean
+            </label>
+            <label>
+                <input type="checkbox" id="show-median" checked> Show Median
+            </label>
+        </div>
+        
+        <div class="chart-container">
+            <div id="chart"></div>
+        </div>
+        
+        <div id="stats" style="background: #e8f4f8; padding: 15px; border-radius: 6px; margin: 15px 0; font-size: 0.9em;"></div>
+    </div>
+    
+    <script>
+        // Enhanced test score data (370 data points) - embedded for static demo
+        const testScoreData = [
+            // Mathematics - normal distribution, slightly lower mean (80 students)
+            ...Array.from({length: 80}, () => {
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                const score = Math.max(0, Math.min(100, 72 + z0 * 15));
+                return { subject: 'Mathematics', score, category: 'Mathematics' };
+            }),
+            
+            // Science - bimodal distribution (75 students)
+            ...Array.from({length: 75}, () => {
+                const mode = Math.random() < 0.6 ? 1 : 2;
+                let score;
+                if (mode === 1) {
+                    const u1 = Math.random();
+                    const u2 = Math.random();
+                    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                    score = 25 + z0 * 5;
+                } else {
+                    const u1 = Math.random();
+                    const u2 = Math.random();
+                    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                    score = 75 + z0 * 8;
+                }
+                return { subject: 'Science', score: Math.max(0, Math.min(100, score)), category: 'Science' };
+            }),
+            
+            // English - normal distribution, higher mean (85 students)
+            ...Array.from({length: 85}, () => {
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                const score = Math.max(0, Math.min(100, 78 + z0 * 12));
+                return { subject: 'English', score, category: 'English' };
+            }),
+            
+            // History - normal distribution (70 students)
+            ...Array.from({length: 70}, () => {
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                const score = Math.max(0, Math.min(100, 75 + z0 * 14));
+                return { subject: 'History', score, category: 'History' };
+            }),
+            
+            // Art - skewed distribution (many high scores) (60 students)
+            ...Array.from({length: 60}, () => {
+                const u = Math.random();
+                const score = 100 - Math.pow(u, 0.5) * 100;
+                return { subject: 'Art', score: Math.max(0, Math.min(100, score)), category: 'Art' };
+            })
+        ];
+        
+        // Simple footswarm chart implementation for demo
+        function calculateStats(values) {
+            if (!values || values.length === 0) {
+                return { mean: 0, median: 0, min: 0, max: 0, count: 0 };
+            }
+            
+            const sorted = [...values].sort((a, b) => a - b);
+            const n = sorted.length;
+            
+            const mean = values.reduce((sum, val) => sum + val, 0) / n;
+            const median = n % 2 === 0 
+                ? (sorted[n / 2 - 1] + sorted[n / 2]) / 2
+                : sorted[Math.floor(n / 2)];
+            
+            return {
+                mean,
+                median,
+                min: sorted[0],
+                max: sorted[n - 1],
+                count: n
+            };
+        }
+        
+        function createFootswarmChart(data, options = {}) {
+            const {
+                x = "value",
+                y = "category",
+                width = 800,
+                height = 400,
+                opacity = 0.6,
+                jitter = 0.5,
+                pointRadius = 4,
+                pointColor = "#4285f4",
+                showMean = true,
+                showMedian = true,
+                xLabel = null,
+                yLabel = null
+            } = options;
+
+            // Prepare data with jittered y-coordinates
+            const processedData = [];
+            const categories = [...new Set(data.map(d => d[y]))];
+            
+            categories.forEach(category => {
+                const categoryData = data.filter(d => d[y] === category);
+                
+                categoryData.forEach((d, i) => {
+                    processedData.push({
+                        ...d,
+                        jitteredY: (Math.random() - 0.5) * jitter,
+                        originalCategory: d[y]
+                    });
+                });
+            });
+
+            // Calculate statistics for each category
+            const statsData = categories.map(category => {
+                const categoryData = data.filter(d => d[y] === category);
+                const values = categoryData.map(d => d[x]);
+                const stats = calculateStats(values);
+                return {
+                    category,
+                    ...stats
+                };
+            });
+
+            // Create marks array
+            const marks = [];
+
+            // Background lines at y=0 for each category
+            marks.push(
+                Plot.ruleY(categories.map(cat => ({ category: cat, y: 0 })), {
+                    y: d => d.category,
+                    stroke: "#f0f0f0",
+                    strokeWidth: 1
+                })
+            );
+
+            // Data points with jittering
+            marks.push(
+                Plot.dot(processedData, {
+                    x: x,
+                    y: d => d.jitteredY,
+                    fy: "originalCategory",
+                    fill: pointColor,
+                    fillOpacity: opacity,
+                    stroke: "none",
+                    r: pointRadius,
+                    tip: true,
+                    title: d => `${d[x]?.toFixed?.(1) || d[x]}`
+                })
+            );
+
+            // Mean lines
+            if (showMean) {
+                marks.push(
+                    Plot.ruleX(statsData, {
+                        x: "mean",
+                        fy: "category",
+                        stroke: "#ff6b6b",
+                        strokeWidth: 2,
+                        strokeDasharray: "5,5"
+                    })
+                );
+
+                // Mean labels
+                marks.push(
+                    Plot.text(statsData, {
+                        x: "mean",
+                        y: 0.7,
+                        fy: "category",
+                        text: "Mean",
+                        fill: "#ff6b6b",
+                        fontSize: 10,
+                        fontWeight: "bold",
+                        textAnchor: "start",
+                        dx: 5
+                    })
+                );
+            }
+
+            // Median lines
+            if (showMedian) {
+                marks.push(
+                    Plot.ruleX(statsData, {
+                        x: "median",
+                        fy: "category",
+                        stroke: "#4ecdc4",
+                        strokeWidth: 2,
+                        strokeDasharray: "10,2"
+                    })
+                );
+
+                // Median labels
+                marks.push(
+                    Plot.text(statsData, {
+                        x: "median",
+                        y: -0.7,
+                        fy: "category",
+                        text: "Median",
+                        fill: "#4ecdc4",
+                        fontSize: 10,
+                        fontWeight: "bold",
+                        textAnchor: "end",
+                        dx: -5
+                    })
+                );
+            }
+
+            // Zero line
+            marks.push(Plot.ruleX([0]));
+
+            return Plot.plot({
+                width,
+                height: Math.max(300, categories.length * 80 + 100),
+                marginLeft: 100,
+                marginRight: 40,
+                marginTop: 20,
+                marginBottom: 40,
+                x: {
+                    label: xLabel,
+                    grid: true,
+                    nice: true
+                },
+                fy: {
+                    label: yLabel,
+                    domain: categories,
+                    padding: 0.1
+                },
+                y: {
+                    domain: [-1, 1],
+                    ticks: [],
+                    axis: null
+                },
+                marks
+            });
+        }
+        
+        // Use enhanced test score data from sample datasets (370 data points)
+        // Map the data structure to match demo expectations
+        const testScores = testScoreData.map(d => ({
+            class: d.subject,
+            score: d.score
+        }));
+        
+        let currentChart;
+        
+        function updateChart() {
+            const opacity = parseFloat(document.getElementById('opacity-slider').value);
+            const jitter = parseFloat(document.getElementById('jitter-slider').value);
+            const showMean = document.getElementById('show-mean').checked;
+            const showMedian = document.getElementById('show-median').checked;
+            
+            // Update display values
+            document.getElementById('opacity-value').textContent = opacity;
+            document.getElementById('jitter-value').textContent = jitter;
+            
+            // Clear previous chart
+            document.getElementById('chart').innerHTML = '';
+            
+            // Create new chart
+            currentChart = createFootswarmChart(testScores, {
+                x: 'score',
+                y: 'class',
+                xLabel: 'Test Score',
+                yLabel: 'Subject',
+                opacity: opacity,
+                jitter: jitter,
+                showMean: showMean,
+                showMedian: showMedian,
+                width: 800,
+                height: 350
+            });
+            
+            document.getElementById('chart').appendChild(currentChart);
+            
+            // Update stats
+            updateStats();
+        }
+        
+        function updateStats() {
+            const categories = [...new Set(testScores.map(d => d.class))];
+            let html = '<strong>Statistics Summary:</strong><br>';
+            
+            categories.forEach(cls => {
+                const classData = testScores.filter(d => d.class === cls);
+                const scores = classData.map(d => d.score);
+                const stats = calculateStats(scores);
+                
+                html += `<strong>${cls}</strong> (n=${stats.count}): `;
+                html += `Mean=${stats.mean.toFixed(1)}, `;
+                html += `Median=${stats.median.toFixed(1)}, `;
+                html += `Range=${stats.min}-${stats.max}<br>`;
+            });
+            
+            document.getElementById('stats').innerHTML = html;
+        }
+        
+        // Add event listeners
+        document.getElementById('opacity-slider').addEventListener('input', updateChart);
+        document.getElementById('jitter-slider').addEventListener('input', updateChart);
+        document.getElementById('show-mean').addEventListener('change', updateChart);
+        document.getElementById('show-median').addEventListener('change', updateChart);
+        
+        // Initial render
+        updateChart();
+    </script>
+</body>
+</html>

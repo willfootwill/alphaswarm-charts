@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footswarm Charts - Examples</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .example-section {
+            margin: 40px 0;
+            padding: 30px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #fafbfc;
+        }
+        
+        .example-section h2 {
+            color: #34495e;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .controls label {
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .controls input[type="range"] {
+            width: 120px;
+            margin: 0 10px;
+        }
+        
+        .controls input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        .chart-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .stats-summary {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-line {
+            width: 20px;
+            height: 2px;
+        }
+        
+        .mean-line {
+            background: #ff6b6b;
+            border-top: 2px dashed #ff6b6b;
+        }
+        
+        .median-line {
+            background: #4ecdc4;
+            border-top: 2px dashed #4ecdc4;
+        }
+        
+        .code-example {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        
+        .nav {
+            background: #34495e;
+            color: white;
+            padding: 15px 0;
+            margin: -30px -30px 30px -30px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .nav a {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav a:hover {
+            background-color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <ul>
+                <li><a href="#simple">Simple Example</a></li>
+                <li><a href="#meeting-time">Meeting Time</a></li>
+                <li><a href="#performance">Performance</a></li>
+                <li><a href="#response-time">Response Time</a></li>
+                <li><a href="#vertical">Vertical Charts</a></li>
+            </ul>
+        </nav>
+        
+        <h1>Footswarm Charts</h1>
+        <p class="subtitle">Distribution visualizations that show individual data points with statistical overlays</p>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-line mean-line"></div>
+                <span>Mean</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line median-line"></div>
+                <span>Median</span>
+            </div>
+        </div>
+        
+        <!-- Simple Example -->
+        <div id="simple" class="example-section">
+            <h2>1. Simple Example - Getting Started</h2>
+            <p>A basic footswarm chart showing three groups with different distributions. Perfect for understanding the fundamentals.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="simple-opacity-value">0.6</span>
+                    <input type="range" id="simple-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="simple-jitter-value">0.5</span>
+                    <input type="range" id="simple-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="simple-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="simple-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="simple-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="simple-stats"></div>
+            
+            <div class="code-example">
+<pre>import { createFootswarmChart } from './src/footswarm.js';
+import { simpleData } from './data/sample-datasets.js';
+
+const chart = createFootswarmChart(simpleData, {
+    x: 'value',
+    y: 'category',
+    xLabel: 'Value',
+    yLabel: 'Groups',
+    opacity: 0.6,
+    jitter: 0.5,
+    showMean: true,
+    showMedian: true
+});
+
+document.getElementById('chart-container').appendChild(chart);</pre>
+            </div>
+        </div>
+        
+        <!-- Meeting Time Analysis -->
+        <div id="meeting-time" class="example-section">
+            <h2>2. Meeting Time Analysis by Developer Level</h2>
+            <p>Inspired by your original implementation - shows daily meeting hours across software developer levels. Notice how senior levels (L5-L7) have more variable and higher meeting loads.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="meeting-opacity-value">0.6</span>
+                    <input type="range" id="meeting-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="meeting-jitter-value">0.5</span>
+                    <input type="range" id="meeting-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="meeting-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="meeting-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="meeting-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="meeting-stats"></div>
+        </div>
+        
+        <!-- Performance Metrics -->
+        <div id="performance" class="example-section">
+            <h2>3. Team Performance Scores</h2>
+            <p>Performance metrics across different teams. Notice the bimodal distribution in the DevOps team, suggesting two distinct performance groups.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="performance-opacity-value">0.6</span>
+                    <input type="range" id="performance-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="performance-jitter-value">0.5</span>
+                    <input type="range" id="performance-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="performance-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="performance-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="performance-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="performance-stats"></div>
+        </div>
+        
+        <!-- Response Time Analysis -->
+        <div id="response-time" class="example-section">
+            <h2>4. API Response Times by Day of Week</h2>
+            <p>Response time patterns across weekdays. Shows how performance varies throughout the week, with Friday showing more variable performance.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="response-opacity-value">0.6</span>
+                    <input type="range" id="response-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="response-jitter-value">0.5</span>
+                    <input type="range" id="response-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="response-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="response-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="response-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="response-stats"></div>
+        </div>
+        
+        <!-- Vertical Charts -->
+        <div id="vertical" class="example-section">
+            <h2>5. Vertical Footswarm Charts</h2>
+            <p>The same data can be displayed vertically for different layout needs. This example shows sales performance by region.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="vertical-opacity-value">0.6</span>
+                    <input type="range" id="vertical-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="vertical-jitter-value">0.5</span>
+                    <input type="range" id="vertical-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="vertical-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="vertical-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="vertical-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="vertical-stats"></div>
+        </div>
+    </div>
+    
+    <script type="module" src="examples.js"></script>
+</body>
+</html>
