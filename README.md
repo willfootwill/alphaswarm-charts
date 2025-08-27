@@ -325,5 +325,5 @@ If you use this library in academic work, please cite:
   title={Footswarm Charts: Distribution Visualizations with Individual Data Point Visibility},
   author={Will Foot},
   year={2025},
-  url={https://github.com/yourusername/footswarm-charts}
+  url={https://github.com/willfootwill/footswarm-charts}
 }
