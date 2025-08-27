@@ -323,7 +323,7 @@ If you use this library in academic work, please cite:
 ```bibtex
 @software{footswarm_charts,
   title={Footswarm Charts: Distribution Visualizations with Individual Data Point Visibility},
-  author={Your Name},
+  author={Will Foot},
   year={2025},
   url={https://github.com/yourusername/footswarm-charts}
 }
