@@ -287,11 +287,7 @@ Requires ES6 module support.
 - [Observable Plot](https://observablehq.com/plot/) - For chart rendering
 - [D3.js](https://d3js.org/) - For data manipulation utilities
 
-## Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### Development Setup
+## Development Setup
 
 ```bash
 git clone https://github.com/yourusername/footswarm-charts.git
@@ -312,8 +308,6 @@ This library was inspired by:
 - [Beeswarm plots](https://observablehq.com/@d3/beeswarm) for point distribution techniques
 - [Box plots](https://en.wikipedia.org/wiki/Box_plot) for statistical summaries
 - Real-world data visualization needs in software engineering analytics
-
-The term "footswarm" reflects how individual data points cluster and spread like a swarm, while the overall shape resembles a footprint of the distribution.
 
 ## Citation
 
