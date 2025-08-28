@@ -154,13 +154,6 @@ function setupControls(prefix, data, valueField, categoryField, chartType = 'hor
     // Update chart function
     function updateChart() {
         try {
-            console.log(`🔄 Updating chart: ${prefix}`, { 
-                dataLength: data.length, 
-                valueField, 
-                categoryField,
-                sampleData: data.slice(0, 3)
-            });
-            
             const currentJitter = parseFloat(jitterSlider.value);
             const processedData = getProcessedData(currentJitter);
             
@@ -198,18 +191,14 @@ function setupControls(prefix, data, valueField, categoryField, chartType = 'hor
                 options.y = valueField;
             }
             
-            console.log(`📊 Chart options for ${prefix}:`, options);
-            
             // Clear previous chart
             chartContainer.innerHTML = '';
             
             // Create new chart
             let chart;
             if (chartType === 'vertical') {
-                console.log(`📈 Creating vertical chart for ${prefix}`);
                 chart = createVerticalFootswarmChart(data, options);
             } else {
-                console.log(`📈 Creating horizontal chart for ${prefix}`);
                 chart = createFootswarmChart(data, options);
             }
             
@@ -218,8 +207,6 @@ function setupControls(prefix, data, valueField, categoryField, chartType = 'hor
             
             // Update stats
             statsContainer.innerHTML = generateStatsSummary(data, valueField, categoryField);
-            
-            console.log(`✅ Chart ${prefix} created successfully`);
             
         } catch (error) {
             console.error(`❌ Error creating chart ${prefix}:`, error);

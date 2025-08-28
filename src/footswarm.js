@@ -91,9 +91,6 @@ export function generateJitter(count, jitter = 0.5, method = 'random', seed = 12
  */
 export function createFootswarmChart(data, options = {}) {
     try {
-        console.log('🔧 Creating footswarm chart with data:', data.slice(0, 3));
-        console.log('🔧 Chart options:', options);
-        
         const {
             x = "value",                    // x-axis field name
             y = "category",                 // y-axis field name (for grouping)
@@ -124,7 +121,6 @@ export function createFootswarmChart(data, options = {}) {
 
         // Get categories first (needed for both paths)
         const categories = [...new Set(data.map(d => d[y]))];
-        console.log('🏷️ Categories found:', categories);
 
         // Use pre-processed data if provided, otherwise generate jittered coordinates
         let processedData;
@@ -149,8 +145,6 @@ export function createFootswarmChart(data, options = {}) {
             });
         }
 
-        console.log('📊 Processed data sample:', processedData.slice(0, 3));
-
         // Calculate statistics for each category
         const statsData = categories.map(category => {
             const categoryData = data.filter(d => d[y] === category);
@@ -161,8 +155,6 @@ export function createFootswarmChart(data, options = {}) {
                 ...stats
             };
         });
-
-        console.log('📈 Stats data:', statsData);
 
         // Start with a simple chart - just dots
         const marks = [
@@ -200,8 +192,6 @@ export function createFootswarmChart(data, options = {}) {
             );
         }
 
-        console.log('🎨 Creating plot with marks:', marks.length);
-
         const plotConfig = {
             width,
             height,
@@ -226,10 +216,7 @@ export function createFootswarmChart(data, options = {}) {
             marks
         };
 
-        console.log('⚙️ Plot config:', plotConfig);
-
         const plot = Plot.plot(plotConfig);
-        console.log('✅ Plot created successfully');
         
         return plot;
         
@@ -247,9 +234,6 @@ export function createFootswarmChart(data, options = {}) {
  */
 export function createVerticalFootswarmChart(data, options = {}) {
     try {
-        console.log('🔧 Creating vertical footswarm chart with data:', data.slice(0, 3));
-        console.log('🔧 Vertical chart options:', options);
-        
         const {
             x = "category",                 // x-axis field name (for grouping)
             y = "value",                    // y-axis field name
@@ -280,15 +264,12 @@ export function createVerticalFootswarmChart(data, options = {}) {
 
         // Get categories first (needed for both paths)
         const categories = [...new Set(data.map(d => d[x]))];
-        console.log('🏷️ Vertical chart categories found:', categories);
 
         // Use pre-processed data if provided, otherwise generate jittered coordinates
         let processedData;
         if (options._processedData) {
-            console.log('📋 Using pre-processed data with cached jitter coordinates for vertical chart');
             processedData = options._processedData;
         } else {
-            console.log('🔄 Generating new jittered coordinates for vertical chart');
             processedData = [];
             
             categories.forEach((category, categoryIndex) => {
@@ -307,8 +288,6 @@ export function createVerticalFootswarmChart(data, options = {}) {
             });
         }
 
-        console.log('📊 Vertical processed data sample:', processedData.slice(0, 3));
-
         // Calculate statistics for each category
         const statsData = categories.map(category => {
             const categoryData = data.filter(d => d[x] === category);
@@ -319,8 +298,6 @@ export function createVerticalFootswarmChart(data, options = {}) {
                 ...stats
             };
         });
-
-        console.log('📈 Vertical stats data:', statsData);
 
         // Start with a simple chart - just dots
         const marks = [
@@ -358,8 +335,6 @@ export function createVerticalFootswarmChart(data, options = {}) {
             );
         }
 
-        console.log('🎨 Creating vertical plot with marks:', marks.length);
-
         const plotConfig = {
             width,
             height,
@@ -384,10 +359,7 @@ export function createVerticalFootswarmChart(data, options = {}) {
             marks
         };
 
-        console.log('⚙️ Vertical plot config:', plotConfig);
-
         const plot = Plot.plot(plotConfig);
-        console.log('✅ Vertical plot created successfully');
         
         return plot;
         
