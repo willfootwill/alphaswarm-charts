@@ -43,6 +43,9 @@ console.log('✅ Dependencies available:', { Plot: !!window.Plot, d3: !!window.d
 // Chart instances to track for updates
 const charts = {};
 
+// Cache for jitter coordinates to prevent regeneration on non-jitter updates
+const jitterCache = {};
+
 /**
  * Format numbers for display
  */
@@ -93,6 +96,61 @@ function setupControls(prefix, data, valueField, categoryField, chartType = 'hor
     const chartContainer = document.getElementById(`${prefix}-chart`);
     const statsContainer = document.getElementById(`${prefix}-stats`);
     
+    // Initialize jitter cache for this chart
+    jitterCache[prefix] = {
+        jitterValue: parseFloat(jitterSlider.value),
+        processedData: null
+    };
+    
+    // Function to generate or retrieve cached jittered data
+    function getProcessedData(currentJitter) {
+        const cache = jitterCache[prefix];
+        
+        // If jitter value hasn't changed and we have cached data, use it
+        if (cache.processedData && cache.jitterValue === currentJitter) {
+            return cache.processedData;
+        }
+        
+        // Generate new jittered data
+        const processedData = [];
+        const categories = [...new Set(data.map(d => d[categoryField]))];
+        
+        categories.forEach((category, categoryIndex) => {
+            const categoryData = data.filter(d => d[categoryField] === category);
+            // Use a deterministic seed based on category to ensure consistent jitter
+            const seed = 12345 + categoryIndex * 1000;
+            
+            // Generate jitter coordinates using the same logic as in footswarm.js
+            const jitterCoords = [];
+            const seededRandom = window.d3.randomLcg(seed);
+            for (let i = 0; i < categoryData.length; i++) {
+                jitterCoords.push((seededRandom() - 0.5) * currentJitter);
+            }
+            
+            categoryData.forEach((d, i) => {
+                if (chartType === 'vertical') {
+                    processedData.push({
+                        ...d,
+                        jitteredX: jitterCoords[i],
+                        originalCategory: d[categoryField]
+                    });
+                } else {
+                    processedData.push({
+                        ...d,
+                        jitteredY: jitterCoords[i],
+                        originalCategory: d[categoryField]
+                    });
+                }
+            });
+        });
+        
+        // Cache the results
+        cache.jitterValue = currentJitter;
+        cache.processedData = processedData;
+        
+        return processedData;
+    }
+    
     // Update chart function
     function updateChart() {
         try {
@@ -103,16 +161,21 @@ function setupControls(prefix, data, valueField, categoryField, chartType = 'hor
                 sampleData: data.slice(0, 3)
             });
             
+            const currentJitter = parseFloat(jitterSlider.value);
+            const processedData = getProcessedData(currentJitter);
+            
             const options = {
                 x: valueField,
                 y: categoryField,
                 opacity: parseFloat(opacitySlider.value),
-                jitter: parseFloat(jitterSlider.value),
+                jitter: currentJitter,
                 showMean: meanCheckbox.checked,
                 showMedian: medianCheckbox.checked,
                 showTooltips: true,
                 width: 800,
-                height: Math.max(300, [...new Set(data.map(d => d[categoryField]))].length * 80)
+                height: Math.max(300, [...new Set(data.map(d => d[categoryField]))].length * 80),
+                // Pass the pre-processed data to avoid regenerating jitter
+                _processedData: processedData
             };
             
             // Set appropriate labels based on dataset

@@ -122,26 +122,32 @@ export function createFootswarmChart(data, options = {}) {
             throw new Error('Data must be a non-empty array');
         }
 
-        // Prepare data with jittered y-coordinates
-        const processedData = [];
+        // Get categories first (needed for both paths)
         const categories = [...new Set(data.map(d => d[y]))];
-        
         console.log('🏷️ Categories found:', categories);
-        
-        categories.forEach((category, categoryIndex) => {
-            const categoryData = data.filter(d => d[y] === category);
-            // Use a deterministic seed based on category to ensure consistent jitter
-            const seed = 12345 + categoryIndex * 1000;
-            const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod, seed);
+
+        // Use pre-processed data if provided, otherwise generate jittered coordinates
+        let processedData;
+        if (options._processedData) {
+            processedData = options._processedData;
+        } else {
+            processedData = [];
             
-            categoryData.forEach((d, i) => {
-                processedData.push({
-                    ...d,
-                    jitteredY: jitterCoords[i],
-                    originalCategory: d[y]
+            categories.forEach((category, categoryIndex) => {
+                const categoryData = data.filter(d => d[y] === category);
+                // Use a deterministic seed based on category to ensure consistent jitter
+                const seed = 12345 + categoryIndex * 1000;
+                const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod, seed);
+                
+                categoryData.forEach((d, i) => {
+                    processedData.push({
+                        ...d,
+                        jitteredY: jitterCoords[i],
+                        originalCategory: d[y]
+                    });
                 });
             });
-        });
+        }
 
         console.log('📊 Processed data sample:', processedData.slice(0, 3));
 
@@ -272,26 +278,34 @@ export function createVerticalFootswarmChart(data, options = {}) {
             throw new Error('Data must be a non-empty array');
         }
 
-        // Prepare data with jittered x-coordinates
-        const processedData = [];
+        // Get categories first (needed for both paths)
         const categories = [...new Set(data.map(d => d[x]))];
-        
         console.log('🏷️ Vertical chart categories found:', categories);
-        
-        categories.forEach((category, categoryIndex) => {
-            const categoryData = data.filter(d => d[x] === category);
-            // Use a deterministic seed based on category to ensure consistent jitter
-            const seed = 12345 + categoryIndex * 1000;
-            const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod, seed);
+
+        // Use pre-processed data if provided, otherwise generate jittered coordinates
+        let processedData;
+        if (options._processedData) {
+            console.log('📋 Using pre-processed data with cached jitter coordinates for vertical chart');
+            processedData = options._processedData;
+        } else {
+            console.log('🔄 Generating new jittered coordinates for vertical chart');
+            processedData = [];
             
-            categoryData.forEach((d, i) => {
-                processedData.push({
-                    ...d,
-                    jitteredX: jitterCoords[i],
-                    originalCategory: d[x]
+            categories.forEach((category, categoryIndex) => {
+                const categoryData = data.filter(d => d[x] === category);
+                // Use a deterministic seed based on category to ensure consistent jitter
+                const seed = 12345 + categoryIndex * 1000;
+                const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod, seed);
+                
+                categoryData.forEach((d, i) => {
+                    processedData.push({
+                        ...d,
+                        jitteredX: jitterCoords[i],
+                        originalCategory: d[x]
+                    });
                 });
             });
-        });
+        }
 
         console.log('📊 Vertical processed data sample:', processedData.slice(0, 3));
 
