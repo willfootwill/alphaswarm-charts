@@ -58,9 +58,10 @@ export function calculateStats(values) {
  * @param {number} count - Number of data points
  * @param {number} jitter - Jitter amount (0-1)
  * @param {string} method - Jittering method ('random' or 'uniform')
+ * @param {number} seed - Seed for deterministic random generation
  * @returns {number[]} Array of y-coordinates
  */
-export function generateJitter(count, jitter = 0.5, method = 'random') {
+export function generateJitter(count, jitter = 0.5, method = 'random', seed = 12345) {
     const coords = [];
     
     if (method === 'uniform') {
@@ -69,12 +70,14 @@ export function generateJitter(count, jitter = 0.5, method = 'random') {
             const position = (i / (count - 1)) - 0.5; // -0.5 to 0.5
             coords.push(position * jitter);
         }
-        // Shuffle to avoid systematic patterns
-        return d3.shuffle(coords);
+        // Shuffle to avoid systematic patterns using seeded random
+        const seededRandom = d3.randomLcg(seed);
+        return d3.shuffle(coords, seededRandom);
     } else {
-        // Random jittering (default)
+        // Seeded random jittering for consistent results
+        const seededRandom = d3.randomLcg(seed);
         for (let i = 0; i < count; i++) {
-            coords.push((Math.random() - 0.5) * jitter);
+            coords.push((seededRandom() - 0.5) * jitter);
         }
         return coords;
     }
@@ -125,9 +128,11 @@ export function createFootswarmChart(data, options = {}) {
         
         console.log('🏷️ Categories found:', categories);
         
-        categories.forEach(category => {
+        categories.forEach((category, categoryIndex) => {
             const categoryData = data.filter(d => d[y] === category);
-            const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod);
+            // Use a deterministic seed based on category to ensure consistent jitter
+            const seed = 12345 + categoryIndex * 1000;
+            const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod, seed);
             
             categoryData.forEach((d, i) => {
                 processedData.push({
@@ -273,9 +278,11 @@ export function createVerticalFootswarmChart(data, options = {}) {
         
         console.log('🏷️ Vertical chart categories found:', categories);
         
-        categories.forEach(category => {
+        categories.forEach((category, categoryIndex) => {
             const categoryData = data.filter(d => d[x] === category);
-            const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod);
+            // Use a deterministic seed based on category to ensure consistent jitter
+            const seed = 12345 + categoryIndex * 1000;
+            const jitterCoords = generateJitter(categoryData.length, jitter, jitterMethod, seed);
             
             categoryData.forEach((d, i) => {
                 processedData.push({
