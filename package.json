@@ -30,10 +30,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/footswarm-charts.git"
+    "url": "https://github.com/willfootwill/footswarm-charts.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/footswarm-charts/issues"
+    "url": "https://github.com/willfootwill/footswarm-charts/issues"
   },
-  "homepage": "https://github.com/yourusername/footswarm-charts#readme"
+  "homepage": "https://github.com/willfootwill/footswarm-charts#readme"
 }

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Footswarm Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+</head>
+<body>
+    <h1>Footswarm Charts</h1>
+    <p>Interactive data visualization showing individual data points with statistical overlays</p>
+    
+    <p>Footswarm charts are particularly useful when you want to:</p>
+    <ul>
+        <li>Explore distributions while seeing individual data points</li>
+        <li>Compare groups with different sample sizes</li>
+        <li>Identify outliers and unusual patterns</li>
+        <li>Show variability within categories</li>
+        <li>Reveal multimodal distributions that box plots might hide</li>
+        <li>Maintain transparency about your data's individual observations</li>
+    </ul>
+    
+    <p><a href="https://github.com/willfootwill/footswarm-charts">View on GitHub</a></p>
+    
+    <h2>Test Scores by Subject (370 students)</h2>
+    
+    <p><strong>Legend:</strong> 
+    <span style="color:#ff6b6b">--- Mean</span> | 
+    <span style="color:#4ecdc4">- - - Median</span></p>
+    
+    <p>Each dot is one student's score. Notice Science has two peaks, Art skews high.</p>
+    
+    <p>
+        <label>Opacity: <span id="opacity-value">0.4</span> 
+        <input type="range" id="opacity-slider" min="0.1" max="1" step="0.1" value="0.4"></label>
+        
+        <label>Jitter: <span id="jitter-value">0.5</span> 
+        <input type="range" id="jitter-slider" min="0" max="1" step="0.1" value="0.5"></label>
+        
+        <label><input type="checkbox" id="show-mean" checked> Show Mean</label>
+        
+        <label><input type="checkbox" id="show-median" checked> Show Median</label>
+    </p>
+    
+    <div id="chart"></div>
+    
+    <div id="stats"></div>
+    
+    <h3>Code Example</h3>
+    <p>Here's how to create this chart:</p>
+    <pre><code>&lt;!-- Include dependencies --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/d3@7"&gt;&lt;/script&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+// Your data
+const data = [
+  { subject: 'Math', score: 85 },
+  { subject: 'Math', score: 92 },
+  { subject: 'Science', score: 78 },
+  // ... more data points
+];
+
+// Create chart
+const chart = createFootswarmChart(data, {
+  x: 'score',
+  y: 'subject',
+  opacity: 0.4,
+  jitter: 0.5,
+  showMean: true,
+  showMedian: true
+});
+
+// Add to page
+document.getElementById('chart').appendChild(chart);
+&lt;/script&gt;</code></pre>
+    
+    <h3>Vertical Chart Example</h3>
+    
+    <h4>Sales by Region (Vertical Layout)</h4>
+    <p>Same data visualization concept but with vertical orientation. Shows sales performance across different regions.</p>
+    <p>
+        <label>Opacity: <span id="vertical-opacity-value">0.6</span> 
+        <input type="range" id="vertical-opacity-slider" min="0.1" max="1" step="0.1" value="0.6"></label>
+        
+        <label>Jitter: <span id="vertical-jitter-value">0.5</span> 
+        <input type="range" id="vertical-jitter-slider" min="0" max="1" step="0.1" value="0.5"></label>
+        
+        <label><input type="checkbox" id="vertical-show-mean" checked> Show Mean</label>
+        
+        <label><input type="checkbox" id="vertical-show-median" checked> Show Median</label>
+    </p>
+    <div id="vertical-chart"></div>
+    <div id="vertical-stats"></div>
+    
+    <pre><code>// Vertical chart example
+const salesData = [
+  { region: 'North America', sales: 150000 },
+  { region: 'Europe', sales: 120000 },
+  { region: 'Asia Pacific', sales: 180000 },
+  // ... more data points
+];
+
+const verticalChart = createVerticalFootswarmChart(salesData, {
+  x: 'region',
+  y: 'sales',
+  opacity: 0.6,
+  jitter: 0.5,
+  showMean: true,
+  showMedian: true
+});
+
+document.getElementById('vertical-chart').appendChild(verticalChart);</code></pre>
+    
+    <script>
+        // Test score data (370 points)
+        const testScoreData = [
+            // Mathematics - normal distribution (80 students)
+            ...Array.from({length: 80}, () => {
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                const score = Math.max(0, Math.min(100, 72 + z0 * 15));
+                return { subject: 'Mathematics', score };
+            }),
+            
+            // Science - bimodal distribution (75 students)
+            ...Array.from({length: 75}, () => {
+                const mode = Math.random() < 0.6 ? 1 : 2;
+                let score;
+                if (mode === 1) {
+                    const u1 = Math.random();
+                    const u2 = Math.random();
+                    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                    score = 25 + z0 * 5;
+                } else {
+                    const u1 = Math.random();
+                    const u2 = Math.random();
+                    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                    score = 75 + z0 * 8;
+                }
+                return { subject: 'Science', score: Math.max(0, Math.min(100, score)) };
+            }),
+            
+            // English - normal distribution, higher mean (85 students)
+            ...Array.from({length: 85}, () => {
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                const score = Math.max(0, Math.min(100, 78 + z0 * 12));
+                return { subject: 'English', score };
+            }),
+            
+            // History - normal distribution (70 students)
+            ...Array.from({length: 70}, () => {
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                const score = Math.max(0, Math.min(100, 75 + z0 * 14));
+                return { subject: 'History', score };
+            }),
+            
+            // Art - skewed distribution (60 students)
+            ...Array.from({length: 60}, () => {
+                const u = Math.random();
+                const score = 100 - Math.pow(u, 0.5) * 100;
+                return { subject: 'Art', score: Math.max(0, Math.min(100, score)) };
+            })
+        ];
+        
+        // Sales data for vertical chart
+        const salesData = [
+            ...Array.from({length: 60}, () => ({ region: 'North America', sales: Math.max(10000, 150000 + (Math.random() - 0.5) * 80000) })),
+            ...Array.from({length: 45}, () => ({ region: 'Europe', sales: Math.max(10000, 120000 + (Math.random() - 0.5) * 50000) })),
+            ...Array.from({length: 55}, () => ({ region: 'Asia Pacific', sales: Math.max(10000, 180000 + (Math.random() - 0.5) * 120000) })),
+            ...Array.from({length: 35}, () => ({ region: 'Latin America', sales: Math.max(10000, 20000 + Math.pow(Math.random(), 2) * 40000) })),
+            ...Array.from({length: 25}, () => ({ region: 'MEA', sales: Math.max(10000, 80000 + (Math.random() - 0.5) * 70000) }))
+        ];
+        
+        function calculateStats(values) {
+            if (!values || values.length === 0) return { mean: 0, median: 0, count: 0 };
+            
+            const sorted = [...values].sort((a, b) => a - b);
+            const n = sorted.length;
+            const mean = values.reduce((sum, val) => sum + val, 0) / n;
+            const median = n % 2 === 0 ? (sorted[n / 2 - 1] + sorted[n / 2]) / 2 : sorted[Math.floor(n / 2)];
+            
+            return { mean, median, count: n };
+        }
+        
+        function createFootswarmChart(data, options = {}) {
+            const { x = "score", y = "subject", opacity = 0.4, jitter = 0.5, showMean = true, showMedian = true } = options;
+
+            const processedData = [];
+            const categories = [...new Set(data.map(d => d[y]))];
+            
+            categories.forEach(category => {
+                const categoryData = data.filter(d => d[y] === category);
+                categoryData.forEach(d => {
+                    processedData.push({
+                        ...d,
+                        jitteredY: (Math.random() - 0.5) * jitter,
+                        originalCategory: d[y]
+                    });
+                });
+            });
+
+            const statsData = categories.map(category => {
+                const categoryData = data.filter(d => d[y] === category);
+                const values = categoryData.map(d => d[x]);
+                const stats = calculateStats(values);
+                return { category, ...stats };
+            });
+
+            const marks = [];
+
+            marks.push(Plot.dot(processedData, {
+                x: x,
+                y: d => d.jitteredY,
+                fy: "originalCategory",
+                fill: "#4285f4",
+                fillOpacity: opacity,
+                r: 4,
+                tip: true
+            }));
+
+            if (showMean) {
+                marks.push(Plot.ruleX(statsData, {
+                    x: "mean",
+                    fy: "category",
+                    stroke: "#ff6b6b",
+                    strokeWidth: 2,
+                    strokeDasharray: "5,5"
+                }));
+            }
+
+            if (showMedian) {
+                marks.push(Plot.ruleX(statsData, {
+                    x: "median",
+                    fy: "category",
+                    stroke: "#4ecdc4",
+                    strokeWidth: 2,
+                    strokeDasharray: "10,2"
+                }));
+            }
+
+            return Plot.plot({
+                width: 800,
+                height: 400,
+                marginLeft: 100,
+                x: { label: "Test Score", grid: true },
+                fy: { label: "Subject", domain: categories },
+                y: { domain: [-1, 1], ticks: [], axis: null },
+                marks
+            });
+        }
+        
+        function updateChart() {
+            const opacity = parseFloat(document.getElementById('opacity-slider').value);
+            const jitter = parseFloat(document.getElementById('jitter-slider').value);
+            const showMean = document.getElementById('show-mean').checked;
+            const showMedian = document.getElementById('show-median').checked;
+            
+            document.getElementById('opacity-value').textContent = opacity;
+            document.getElementById('jitter-value').textContent = jitter;
+            
+            document.getElementById('chart').innerHTML = '';
+            
+            const chart = createFootswarmChart(testScoreData, {
+                x: 'score',
+                y: 'subject',
+                opacity: opacity,
+                jitter: jitter,
+                showMean: showMean,
+                showMedian: showMedian
+            });
+            
+            document.getElementById('chart').appendChild(chart);
+            
+            // Update stats
+            const categories = [...new Set(testScoreData.map(d => d.subject))];
+            let html = '<strong>Stats:</strong> ';
+            
+            categories.forEach((subj, i) => {
+                const subjData = testScoreData.filter(d => d.subject === subj);
+                const scores = subjData.map(d => d.score);
+                const stats = calculateStats(scores);
+                
+                html += `${subj}: mean=${stats.mean.toFixed(1)}, median=${stats.median.toFixed(1)}`;
+                if (i < categories.length - 1) html += ' | ';
+            });
+            
+            document.getElementById('stats').innerHTML = html;
+        }
+        
+        // Vertical chart function
+        function createVerticalFootswarmChart(data, options = {}) {
+            const { x = "region", y = "sales", opacity = 0.6, jitter = 0.5, showMean = true, showMedian = true } = options;
+
+            const processedData = [];
+            const categories = [...new Set(data.map(d => d[x]))];
+            
+            categories.forEach(category => {
+                const categoryData = data.filter(d => d[x] === category);
+                categoryData.forEach(d => {
+                    processedData.push({
+                        ...d,
+                        jitteredX: (Math.random() - 0.5) * jitter,
+                        originalCategory: d[x]
+                    });
+                });
+            });
+
+            const statsData = categories.map(category => {
+                const categoryData = data.filter(d => d[x] === category);
+                const values = categoryData.map(d => d[y]);
+                const stats = calculateStats(values);
+                return { category, ...stats };
+            });
+
+            const marks = [];
+
+            marks.push(Plot.dot(processedData, {
+                x: d => d.jitteredX,
+                y: y,
+                fx: "originalCategory",
+                fill: "#4285f4",
+                fillOpacity: opacity,
+                r: 4,
+                tip: true
+            }));
+
+            if (showMean) {
+                marks.push(Plot.ruleY(statsData, {
+                    y: "mean",
+                    fx: "category",
+                    stroke: "#ff6b6b",
+                    strokeWidth: 2,
+                    strokeDasharray: "5,5"
+                }));
+            }
+
+            if (showMedian) {
+                marks.push(Plot.ruleY(statsData, {
+                    y: "median",
+                    fx: "category",
+                    stroke: "#4ecdc4",
+                    strokeWidth: 2,
+                    strokeDasharray: "10,2"
+                }));
+            }
+
+            return Plot.plot({
+                width: 700,
+                height: 400,
+                marginBottom: 60,
+                x: { domain: [-1, 1], ticks: [], axis: null },
+                fx: { label: "Region", domain: categories },
+                y: { label: "Sales ($)", grid: true, tickFormat: "~s" },
+                marks
+            });
+        }
+        
+        function updateVerticalChart() {
+            const opacity = parseFloat(document.getElementById('vertical-opacity-slider').value);
+            const jitter = parseFloat(document.getElementById('vertical-jitter-slider').value);
+            const showMean = document.getElementById('vertical-show-mean').checked;
+            const showMedian = document.getElementById('vertical-show-median').checked;
+            
+            document.getElementById('vertical-opacity-value').textContent = opacity;
+            document.getElementById('vertical-jitter-value').textContent = jitter;
+            document.getElementById('vertical-chart').innerHTML = '';
+            
+            const chart = createVerticalFootswarmChart(salesData, {
+                x: 'region', y: 'sales', opacity, jitter, showMean, showMedian
+            });
+            document.getElementById('vertical-chart').appendChild(chart);
+            
+            const regions = [...new Set(salesData.map(d => d.region))];
+            let html = '<strong>Stats:</strong> ';
+            regions.forEach((region, i) => {
+                const regionData = salesData.filter(d => d.region === region);
+                const sales = regionData.map(d => d.sales);
+                const stats = calculateStats(sales);
+                html += `${region}: mean=$${(stats.mean/1000).toFixed(0)}k, median=$${(stats.median/1000).toFixed(0)}k`;
+                if (i < regions.length - 1) html += ' | ';
+            });
+            document.getElementById('vertical-stats').innerHTML = html;
+        }
+        
+        // Event listeners for main chart
+        document.getElementById('opacity-slider').addEventListener('input', updateChart);
+        document.getElementById('jitter-slider').addEventListener('input', updateChart);
+        document.getElementById('show-mean').addEventListener('change', updateChart);
+        document.getElementById('show-median').addEventListener('change', updateChart);
+        
+        // Event listeners for vertical chart
+        document.getElementById('vertical-opacity-slider').addEventListener('input', updateVerticalChart);
+        document.getElementById('vertical-jitter-slider').addEventListener('input', updateVerticalChart);
+        document.getElementById('vertical-show-mean').addEventListener('change', updateVerticalChart);
+        document.getElementById('vertical-show-median').addEventListener('change', updateVerticalChart);
+        
+        // Initialize charts
+        updateChart();
+        updateVerticalChart();
+    </script>
+</body>
+</html>
