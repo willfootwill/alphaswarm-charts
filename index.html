@@ -1,407 +1,440 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Footswarm Charts</title>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footswarm Charts - Examples</title>
+    <script type="module">
+        // Import and make Observable Plot and D3 available globally
+        import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+        import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+        window.Plot = Plot;
+        window.d3 = d3;
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .example-section {
+            margin: 40px 0;
+            padding: 30px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #fafbfc;
+        }
+        
+        .example-section h2 {
+            color: #34495e;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .controls label {
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .controls input[type="range"] {
+            width: 120px;
+            margin: 0 10px;
+        }
+        
+        .controls input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        .chart-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .stats-summary {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-line {
+            width: 20px;
+            height: 2px;
+        }
+        
+        .mean-line {
+            background: #ff6b6b;
+            border-top: 2px dashed #ff6b6b;
+        }
+        
+        .median-line {
+            background: #4ecdc4;
+            border-top: 2px dashed #4ecdc4;
+        }
+        
+        .code-example {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        
+        .nav {
+            background: #34495e;
+            color: white;
+            padding: 15px 0;
+            margin: -30px -30px 30px -30px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .nav a {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav a:hover {
+            background-color: #2c3e50;
+        }
+    </style>
 </head>
 <body>
-    <h1>Footswarm Charts</h1>
-    <p>Interactive data visualization showing individual data points with statistical overlays</p>
-    
-    <p>Footswarm charts are particularly useful when you want to:</p>
-    <ul>
-        <li>Explore distributions while seeing individual data points</li>
-        <li>Compare groups with different sample sizes</li>
-        <li>Identify outliers and unusual patterns</li>
-        <li>Show variability within categories</li>
-        <li>Reveal multimodal distributions that box plots might hide</li>
-        <li>Maintain transparency about your data's individual observations</li>
-    </ul>
-    
-    <p><a href="https://github.com/willfootwill/footswarm-charts">View on GitHub</a></p>
-    
-    <h2>Test Scores by Subject (370 students)</h2>
-    
-    <p><strong>Legend:</strong> 
-    <span style="color:#ff6b6b">--- Mean</span> | 
-    <span style="color:#4ecdc4">- - - Median</span></p>
-    
-    <p>Each dot is one student's score. Notice Science has two peaks, Art skews high.</p>
-    
-    <p>
-        <label>Opacity: <span id="opacity-value">0.4</span> 
-        <input type="range" id="opacity-slider" min="0.1" max="1" step="0.1" value="0.4"></label>
+    <div class="container">
+        <nav class="nav">
+            <ul>
+                <li><a href="#simple">Simple Example</a></li>
+                <li><a href="#meeting-time">Meeting Time</a></li>
+                <li><a href="#performance">Performance</a></li>
+                <li><a href="#response-time">Response Time</a></li>
+                <li><a href="#vertical">Vertical Charts</a></li>
+            </ul>
+        </nav>
         
-        <label>Jitter: <span id="jitter-value">0.5</span> 
-        <input type="range" id="jitter-slider" min="0" max="1" step="0.1" value="0.5"></label>
+        <h1>Footswarm Charts</h1>
+        <p class="subtitle">Distribution visualizations that show individual data points with statistical overlays</p>
         
-        <label><input type="checkbox" id="show-mean" checked> Show Mean</label>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-line mean-line"></div>
+                <span>Mean</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line median-line"></div>
+                <span>Median</span>
+            </div>
+        </div>
         
-        <label><input type="checkbox" id="show-median" checked> Show Median</label>
-    </p>
-    
-    <div id="chart"></div>
-    
-    <div id="stats"></div>
-    
-    <h3>Code Example</h3>
-    <p>Here's how to create this chart:</p>
-    <pre><code>&lt;!-- Include dependencies --&gt;
-&lt;script src="https://cdn.jsdelivr.net/npm/d3@7"&gt;&lt;/script&gt;
-&lt;script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"&gt;&lt;/script&gt;
+        <!-- Simple Example -->
+        <div id="simple" class="example-section">
+            <h2>1. Simple Example - Getting Started</h2>
+            <p>A basic footswarm chart showing three groups with different distributions. Perfect for understanding the fundamentals.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="simple-opacity-value">0.6</span>
+                    <input type="range" id="simple-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="simple-jitter-value">0.5</span>
+                    <input type="range" id="simple-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="simple-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="simple-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="simple-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="simple-stats"></div>
+            
+            <div class="code-example">
+                <h4>Example Code:</h4>
+                <pre><code>import { createFootswarmChart } from './src/footswarm.js';
+import { simpleData } from './data/sample-datasets.js';
 
-&lt;script&gt;
-// Your data
-const data = [
-  { subject: 'Math', score: 85 },
-  { subject: 'Math', score: 92 },
-  { subject: 'Science', score: 78 },
-  // ... more data points
-];
-
-// Create chart
-const chart = createFootswarmChart(data, {
-  x: 'score',
-  y: 'subject',
-  opacity: 0.4,
-  jitter: 0.5,
-  showMean: true,
-  showMedian: true
+const chart = createFootswarmChart(simpleData, {
+    x: 'value',
+    y: 'category',
+    xLabel: 'Value',
+    yLabel: 'Groups',
+    opacity: 0.6,
+    jitter: 0.5,
+    showMean: true,
+    showMedian: true
 });
 
-// Add to page
-document.getElementById('chart').appendChild(chart);
-&lt;/script&gt;</code></pre>
-    
-    <h3>Vertical Chart Example</h3>
-    
-    <h4>Sales by Region (Vertical Layout)</h4>
-    <p>Same data visualization concept but with vertical orientation. Shows sales performance across different regions.</p>
-    <p>
-        <label>Opacity: <span id="vertical-opacity-value">0.6</span> 
-        <input type="range" id="vertical-opacity-slider" min="0.1" max="1" step="0.1" value="0.6"></label>
+document.getElementById('chart-container').appendChild(chart);</code></pre>
+            </div>
+        </div>
         
-        <label>Jitter: <span id="vertical-jitter-value">0.5</span> 
-        <input type="range" id="vertical-jitter-slider" min="0" max="1" step="0.1" value="0.5"></label>
-        
-        <label><input type="checkbox" id="vertical-show-mean" checked> Show Mean</label>
-        
-        <label><input type="checkbox" id="vertical-show-median" checked> Show Median</label>
-    </p>
-    <div id="vertical-chart"></div>
-    <div id="vertical-stats"></div>
-    
-    <pre><code>// Vertical chart example
-const salesData = [
-  { region: 'North America', sales: 150000 },
-  { region: 'Europe', sales: 120000 },
-  { region: 'Asia Pacific', sales: 180000 },
-  // ... more data points
-];
+        <!-- Meeting Time Analysis -->
+        <div id="meeting-time" class="example-section">
+            <h2>2. Meeting Time Analysis by Developer Level</h2>
+            <p>Inspired by your original implementation - shows daily meeting hours across software developer levels. Notice how senior levels (L5-L7) have more variable and higher meeting loads.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="meeting-opacity-value">0.6</span>
+                    <input type="range" id="meeting-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="meeting-jitter-value">0.5</span>
+                    <input type="range" id="meeting-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="meeting-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="meeting-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="meeting-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="meeting-stats"></div>
+            
+            <div class="code-example">
+                <h4>Example Code:</h4>
+                <pre><code>import { createFootswarmChart } from './src/footswarm.js';
+import { meetingData } from './data/sample-datasets.js';
 
-const verticalChart = createVerticalFootswarmChart(salesData, {
-  x: 'region',
-  y: 'sales',
-  opacity: 0.6,
-  jitter: 0.5,
-  showMean: true,
-  showMedian: true
+const chart = createFootswarmChart(meetingData, {
+    x: 'hours',
+    y: 'level',
+    xLabel: 'Daily Meeting Hours',
+    yLabel: 'Developer Level',
+    opacity: 0.6,
+    jitter: 0.5,
+    showMean: true,
+    showMedian: true,
+    pointColor: '#4285f4'
 });
 
-document.getElementById('vertical-chart').appendChild(verticalChart);</code></pre>
+document.getElementById('meeting-chart').appendChild(chart);</code></pre>
+            </div>
+        </div>
+        
+        <!-- Performance Metrics -->
+        <div id="performance" class="example-section">
+            <h2>3. Team Performance Scores</h2>
+            <p>Performance metrics across different teams. Notice the bimodal distribution in the DevOps team, suggesting two distinct performance groups.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="performance-opacity-value">0.6</span>
+                    <input type="range" id="performance-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="performance-jitter-value">0.5</span>
+                    <input type="range" id="performance-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="performance-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="performance-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="performance-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="performance-stats"></div>
+            
+            <div class="code-example">
+                <h4>Example Code:</h4>
+                <pre><code>import { createFootswarmChart } from './src/footswarm.js';
+import { performanceData } from './data/sample-datasets.js';
+
+const chart = createFootswarmChart(performanceData, {
+    x: 'score',
+    y: 'team',
+    xLabel: 'Performance Score',
+    yLabel: 'Team',
+    opacity: 0.6,
+    jitter: 0.5,
+    showMean: true,
+    showMedian: true,
+    pointColor: '#4285f4'
+});
+
+document.getElementById('performance-chart').appendChild(chart);</code></pre>
+            </div>
+        </div>
+        
+        <!-- Response Time Analysis -->
+        <div id="response-time" class="example-section">
+            <h2>4. API Response Times by Day of Week</h2>
+            <p>Response time patterns across weekdays. Shows how performance varies throughout the week, with Friday showing more variable performance.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="response-opacity-value">0.6</span>
+                    <input type="range" id="response-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="response-jitter-value">0.5</span>
+                    <input type="range" id="response-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="response-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="response-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="response-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="response-stats"></div>
+            
+            <div class="code-example">
+                <h4>Example Code:</h4>
+                <pre><code>import { createFootswarmChart } from './src/footswarm.js';
+import { responseData } from './data/sample-datasets.js';
+
+const chart = createFootswarmChart(responseData, {
+    x: 'time',
+    y: 'day',
+    xLabel: 'Response Time (ms)',
+    yLabel: 'Day of Week',
+    opacity: 0.6,
+    jitter: 0.5,
+    showMean: true,
+    showMedian: true,
+    pointColor: '#4285f4'
+});
+
+document.getElementById('response-chart').appendChild(chart);</code></pre>
+            </div>
+        </div>
+        
+        <!-- Vertical Charts -->
+        <div id="vertical" class="example-section">
+            <h2>5. Vertical Footswarm Charts</h2>
+            <p>The same data can be displayed vertically for different layout needs. This example shows sales performance by region.</p>
+            
+            <div class="controls">
+                <label>
+                    Opacity: <span id="vertical-opacity-value">0.6</span>
+                    <input type="range" id="vertical-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                </label>
+                <label>
+                    Jitter: <span id="vertical-jitter-value">0.5</span>
+                    <input type="range" id="vertical-jitter" min="0" max="1" step="0.1" value="0.5">
+                </label>
+                <label>
+                    <input type="checkbox" id="vertical-mean" checked> Show Mean
+                </label>
+                <label>
+                    <input type="checkbox" id="vertical-median" checked> Show Median
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <div id="vertical-chart"></div>
+            </div>
+            
+            <div class="stats-summary" id="vertical-stats"></div>
+            
+            <div class="code-example">
+                <h4>Example Code:</h4>
+                <pre><code>import { createVerticalFootswarmChart } from './src/footswarm.js';
+import { salesData } from './data/sample-datasets.js';
+
+const chart = createVerticalFootswarmChart(salesData, {
+    x: 'region',
+    y: 'revenue',
+    xLabel: 'Region',
+    yLabel: 'Revenue ($)',
+    opacity: 0.6,
+    jitter: 0.5,
+    showMean: true,
+    showMedian: true,
+    pointColor: '#4285f4'
+});
+
+document.getElementById('vertical-chart').appendChild(chart);</code></pre>
+            </div>
+        </div>
+    </div>
     
-    <script>
-        // Test score data (370 points)
-        const testScoreData = [
-            // Mathematics - normal distribution (80 students)
-            ...Array.from({length: 80}, () => {
-                const u1 = Math.random();
-                const u2 = Math.random();
-                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-                const score = Math.max(0, Math.min(100, 72 + z0 * 15));
-                return { subject: 'Mathematics', score };
-            }),
-            
-            // Science - bimodal distribution (75 students)
-            ...Array.from({length: 75}, () => {
-                const mode = Math.random() < 0.6 ? 1 : 2;
-                let score;
-                if (mode === 1) {
-                    const u1 = Math.random();
-                    const u2 = Math.random();
-                    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-                    score = 25 + z0 * 5;
-                } else {
-                    const u1 = Math.random();
-                    const u2 = Math.random();
-                    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-                    score = 75 + z0 * 8;
-                }
-                return { subject: 'Science', score: Math.max(0, Math.min(100, score)) };
-            }),
-            
-            // English - normal distribution, higher mean (85 students)
-            ...Array.from({length: 85}, () => {
-                const u1 = Math.random();
-                const u2 = Math.random();
-                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-                const score = Math.max(0, Math.min(100, 78 + z0 * 12));
-                return { subject: 'English', score };
-            }),
-            
-            // History - normal distribution (70 students)
-            ...Array.from({length: 70}, () => {
-                const u1 = Math.random();
-                const u2 = Math.random();
-                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-                const score = Math.max(0, Math.min(100, 75 + z0 * 14));
-                return { subject: 'History', score };
-            }),
-            
-            // Art - skewed distribution (60 students)
-            ...Array.from({length: 60}, () => {
-                const u = Math.random();
-                const score = 100 - Math.pow(u, 0.5) * 100;
-                return { subject: 'Art', score: Math.max(0, Math.min(100, score)) };
-            })
-        ];
-        
-        // Sales data for vertical chart
-        const salesData = [
-            ...Array.from({length: 60}, () => ({ region: 'North America', sales: Math.max(10000, 150000 + (Math.random() - 0.5) * 80000) })),
-            ...Array.from({length: 45}, () => ({ region: 'Europe', sales: Math.max(10000, 120000 + (Math.random() - 0.5) * 50000) })),
-            ...Array.from({length: 55}, () => ({ region: 'Asia Pacific', sales: Math.max(10000, 180000 + (Math.random() - 0.5) * 120000) })),
-            ...Array.from({length: 35}, () => ({ region: 'Latin America', sales: Math.max(10000, 20000 + Math.pow(Math.random(), 2) * 40000) })),
-            ...Array.from({length: 25}, () => ({ region: 'MEA', sales: Math.max(10000, 80000 + (Math.random() - 0.5) * 70000) }))
-        ];
-        
-        function calculateStats(values) {
-            if (!values || values.length === 0) return { mean: 0, median: 0, count: 0 };
-            
-            const sorted = [...values].sort((a, b) => a - b);
-            const n = sorted.length;
-            const mean = values.reduce((sum, val) => sum + val, 0) / n;
-            const median = n % 2 === 0 ? (sorted[n / 2 - 1] + sorted[n / 2]) / 2 : sorted[Math.floor(n / 2)];
-            
-            return { mean, median, count: n };
-        }
-        
-        function createFootswarmChart(data, options = {}) {
-            const { x = "score", y = "subject", opacity = 0.4, jitter = 0.5, showMean = true, showMedian = true } = options;
-
-            const processedData = [];
-            const categories = [...new Set(data.map(d => d[y]))];
-            
-            categories.forEach(category => {
-                const categoryData = data.filter(d => d[y] === category);
-                categoryData.forEach(d => {
-                    processedData.push({
-                        ...d,
-                        jitteredY: (Math.random() - 0.5) * jitter,
-                        originalCategory: d[y]
-                    });
-                });
-            });
-
-            const statsData = categories.map(category => {
-                const categoryData = data.filter(d => d[y] === category);
-                const values = categoryData.map(d => d[x]);
-                const stats = calculateStats(values);
-                return { category, ...stats };
-            });
-
-            const marks = [];
-
-            marks.push(Plot.dot(processedData, {
-                x: x,
-                y: d => d.jitteredY,
-                fy: "originalCategory",
-                fill: "#4285f4",
-                fillOpacity: opacity,
-                r: 4,
-                tip: true
-            }));
-
-            if (showMean) {
-                marks.push(Plot.ruleX(statsData, {
-                    x: "mean",
-                    fy: "category",
-                    stroke: "#ff6b6b",
-                    strokeWidth: 2,
-                    strokeDasharray: "5,5"
-                }));
-            }
-
-            if (showMedian) {
-                marks.push(Plot.ruleX(statsData, {
-                    x: "median",
-                    fy: "category",
-                    stroke: "#4ecdc4",
-                    strokeWidth: 2,
-                    strokeDasharray: "10,2"
-                }));
-            }
-
-            return Plot.plot({
-                width: 800,
-                height: 400,
-                marginLeft: 100,
-                x: { label: "Test Score", grid: true },
-                fy: { label: "Subject", domain: categories },
-                y: { domain: [-1, 1], ticks: [], axis: null },
-                marks
-            });
-        }
-        
-        function updateChart() {
-            const opacity = parseFloat(document.getElementById('opacity-slider').value);
-            const jitter = parseFloat(document.getElementById('jitter-slider').value);
-            const showMean = document.getElementById('show-mean').checked;
-            const showMedian = document.getElementById('show-median').checked;
-            
-            document.getElementById('opacity-value').textContent = opacity;
-            document.getElementById('jitter-value').textContent = jitter;
-            
-            document.getElementById('chart').innerHTML = '';
-            
-            const chart = createFootswarmChart(testScoreData, {
-                x: 'score',
-                y: 'subject',
-                opacity: opacity,
-                jitter: jitter,
-                showMean: showMean,
-                showMedian: showMedian
-            });
-            
-            document.getElementById('chart').appendChild(chart);
-            
-            // Update stats
-            const categories = [...new Set(testScoreData.map(d => d.subject))];
-            let html = '<strong>Stats:</strong> ';
-            
-            categories.forEach((subj, i) => {
-                const subjData = testScoreData.filter(d => d.subject === subj);
-                const scores = subjData.map(d => d.score);
-                const stats = calculateStats(scores);
-                
-                html += `${subj}: mean=${stats.mean.toFixed(1)}, median=${stats.median.toFixed(1)}`;
-                if (i < categories.length - 1) html += ' | ';
-            });
-            
-            document.getElementById('stats').innerHTML = html;
-        }
-        
-        // Vertical chart function
-        function createVerticalFootswarmChart(data, options = {}) {
-            const { x = "region", y = "sales", opacity = 0.6, jitter = 0.5, showMean = true, showMedian = true } = options;
-
-            const processedData = [];
-            const categories = [...new Set(data.map(d => d[x]))];
-            
-            categories.forEach(category => {
-                const categoryData = data.filter(d => d[x] === category);
-                categoryData.forEach(d => {
-                    processedData.push({
-                        ...d,
-                        jitteredX: (Math.random() - 0.5) * jitter,
-                        originalCategory: d[x]
-                    });
-                });
-            });
-
-            const statsData = categories.map(category => {
-                const categoryData = data.filter(d => d[x] === category);
-                const values = categoryData.map(d => d[y]);
-                const stats = calculateStats(values);
-                return { category, ...stats };
-            });
-
-            const marks = [];
-
-            marks.push(Plot.dot(processedData, {
-                x: d => d.jitteredX,
-                y: y,
-                fx: "originalCategory",
-                fill: "#4285f4",
-                fillOpacity: opacity,
-                r: 4,
-                tip: true
-            }));
-
-            if (showMean) {
-                marks.push(Plot.ruleY(statsData, {
-                    y: "mean",
-                    fx: "category",
-                    stroke: "#ff6b6b",
-                    strokeWidth: 2,
-                    strokeDasharray: "5,5"
-                }));
-            }
-
-            if (showMedian) {
-                marks.push(Plot.ruleY(statsData, {
-                    y: "median",
-                    fx: "category",
-                    stroke: "#4ecdc4",
-                    strokeWidth: 2,
-                    strokeDasharray: "10,2"
-                }));
-            }
-
-            return Plot.plot({
-                width: 700,
-                height: 400,
-                marginBottom: 60,
-                x: { domain: [-1, 1], ticks: [], axis: null },
-                fx: { label: "Region", domain: categories },
-                y: { label: "Sales ($)", grid: true, tickFormat: "~s" },
-                marks
-            });
-        }
-        
-        function updateVerticalChart() {
-            const opacity = parseFloat(document.getElementById('vertical-opacity-slider').value);
-            const jitter = parseFloat(document.getElementById('vertical-jitter-slider').value);
-            const showMean = document.getElementById('vertical-show-mean').checked;
-            const showMedian = document.getElementById('vertical-show-median').checked;
-            
-            document.getElementById('vertical-opacity-value').textContent = opacity;
-            document.getElementById('vertical-jitter-value').textContent = jitter;
-            document.getElementById('vertical-chart').innerHTML = '';
-            
-            const chart = createVerticalFootswarmChart(salesData, {
-                x: 'region', y: 'sales', opacity, jitter, showMean, showMedian
-            });
-            document.getElementById('vertical-chart').appendChild(chart);
-            
-            const regions = [...new Set(salesData.map(d => d.region))];
-            let html = '<strong>Stats:</strong> ';
-            regions.forEach((region, i) => {
-                const regionData = salesData.filter(d => d.region === region);
-                const sales = regionData.map(d => d.sales);
-                const stats = calculateStats(sales);
-                html += `${region}: mean=$${(stats.mean/1000).toFixed(0)}k, median=$${(stats.median/1000).toFixed(0)}k`;
-                if (i < regions.length - 1) html += ' | ';
-            });
-            document.getElementById('vertical-stats').innerHTML = html;
-        }
-        
-        // Event listeners for main chart
-        document.getElementById('opacity-slider').addEventListener('input', updateChart);
-        document.getElementById('jitter-slider').addEventListener('input', updateChart);
-        document.getElementById('show-mean').addEventListener('change', updateChart);
-        document.getElementById('show-median').addEventListener('change', updateChart);
-        
-        // Event listeners for vertical chart
-        document.getElementById('vertical-opacity-slider').addEventListener('input', updateVerticalChart);
-        document.getElementById('vertical-jitter-slider').addEventListener('input', updateVerticalChart);
-        document.getElementById('vertical-show-mean').addEventListener('change', updateVerticalChart);
-        document.getElementById('vertical-show-median').addEventListener('change', updateVerticalChart);
-        
-        // Initialize charts
-        updateChart();
-        updateVerticalChart();
-    </script>
+    <script type="module" src="examples/examples.js"></script>
 </body>
 </html>
