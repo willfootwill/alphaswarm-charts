@@ -63,12 +63,31 @@
             background: white;
             border-radius: 6px;
             border: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .controls-left {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .controls-legend {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            border-left: 1px solid #dee2e6;
+            padding-left: 20px;
         }
         
         .controls label {
             display: inline-block;
-            margin-right: 20px;
-            margin-bottom: 10px;
+            margin: 0;
             font-weight: 500;
         }
         
@@ -177,22 +196,7 @@
         </nav>
         
         <h1>Footswarm Charts</h1>
-        <p class="subtitle">Distribution visualizations that show individual data points with statistical overlays</p>
-        
-        <p style="text-align: center; margin-bottom: 30px;">
-            <a href="https://github.com/willfootwill/footswarm-charts" target="_blank" style="color: #3498db; text-decoration: none; font-weight: 500; padding: 8px 16px; border: 2px solid #3498db; border-radius: 4px; transition: all 0.3s;">📁 View on GitHub</a>
-        </p>
-        
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-line mean-line"></div>
-                <span>Mean</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-line median-line"></div>
-                <span>Median</span>
-            </div>
-        </div>
+        <p class="subtitle">Distribution visualizations that show individual data points with statistical overlays | <a href="https://github.com/willfootwill/footswarm-charts" target="_blank" style="color: #3498db; text-decoration: none;">View on GitHub</a></p>
         
         <!-- Simple Example -->
         <div id="simple" class="example-section">
@@ -200,20 +204,32 @@
             <p>A basic footswarm chart showing three groups with different distributions. Perfect for understanding the fundamentals.</p>
             
             <div class="controls">
-                <label>
-                    Opacity: <span id="simple-opacity-value">0.6</span>
-                    <input type="range" id="simple-opacity" min="0.1" max="1" step="0.1" value="0.6">
-                </label>
-                <label>
-                    Jitter: <span id="simple-jitter-value">0.5</span>
-                    <input type="range" id="simple-jitter" min="0" max="1" step="0.1" value="0.5">
-                </label>
-                <label>
-                    <input type="checkbox" id="simple-mean" checked> Show Mean
-                </label>
-                <label>
-                    <input type="checkbox" id="simple-median" checked> Show Median
-                </label>
+                <div class="controls-left">
+                    <label>
+                        Opacity: <span id="simple-opacity-value">0.6</span>
+                        <input type="range" id="simple-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                    </label>
+                    <label>
+                        Jitter: <span id="simple-jitter-value">0.5</span>
+                        <input type="range" id="simple-jitter" min="0" max="1" step="0.1" value="0.5">
+                    </label>
+                    <label>
+                        <input type="checkbox" id="simple-mean" checked> Show Mean
+                    </label>
+                    <label>
+                        <input type="checkbox" id="simple-median" checked> Show Median
+                    </label>
+                </div>
+                <div class="controls-legend">
+                    <div class="legend-item">
+                        <div class="legend-line mean-line"></div>
+                        <span>Mean</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line median-line"></div>
+                        <span>Median</span>
+                    </div>
+                </div>
             </div>
             
             <div class="chart-container">
@@ -248,20 +264,32 @@ document.getElementById('chart-container').appendChild(chart);</code></pre>
             <p>Inspired by your original implementation - shows daily meeting hours across software developer levels. Notice how senior levels (L5-L7) have more variable and higher meeting loads.</p>
             
             <div class="controls">
-                <label>
-                    Opacity: <span id="meeting-opacity-value">0.6</span>
-                    <input type="range" id="meeting-opacity" min="0.1" max="1" step="0.1" value="0.6">
-                </label>
-                <label>
-                    Jitter: <span id="meeting-jitter-value">0.5</span>
-                    <input type="range" id="meeting-jitter" min="0" max="1" step="0.1" value="0.5">
-                </label>
-                <label>
-                    <input type="checkbox" id="meeting-mean" checked> Show Mean
-                </label>
-                <label>
-                    <input type="checkbox" id="meeting-median" checked> Show Median
-                </label>
+                <div class="controls-left">
+                    <label>
+                        Opacity: <span id="meeting-opacity-value">0.6</span>
+                        <input type="range" id="meeting-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                    </label>
+                    <label>
+                        Jitter: <span id="meeting-jitter-value">0.5</span>
+                        <input type="range" id="meeting-jitter" min="0" max="1" step="0.1" value="0.5">
+                    </label>
+                    <label>
+                        <input type="checkbox" id="meeting-mean" checked> Show Mean
+                    </label>
+                    <label>
+                        <input type="checkbox" id="meeting-median" checked> Show Median
+                    </label>
+                </div>
+                <div class="controls-legend">
+                    <div class="legend-item">
+                        <div class="legend-line mean-line"></div>
+                        <span>Mean</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line median-line"></div>
+                        <span>Median</span>
+                    </div>
+                </div>
             </div>
             
             <div class="chart-container">
@@ -297,20 +325,32 @@ document.getElementById('meeting-chart').appendChild(chart);</code></pre>
             <p>Performance metrics across different teams. Notice the bimodal distribution in the DevOps team, suggesting two distinct performance groups.</p>
             
             <div class="controls">
-                <label>
-                    Opacity: <span id="performance-opacity-value">0.6</span>
-                    <input type="range" id="performance-opacity" min="0.1" max="1" step="0.1" value="0.6">
-                </label>
-                <label>
-                    Jitter: <span id="performance-jitter-value">0.5</span>
-                    <input type="range" id="performance-jitter" min="0" max="1" step="0.1" value="0.5">
-                </label>
-                <label>
-                    <input type="checkbox" id="performance-mean" checked> Show Mean
-                </label>
-                <label>
-                    <input type="checkbox" id="performance-median" checked> Show Median
-                </label>
+                <div class="controls-left">
+                    <label>
+                        Opacity: <span id="performance-opacity-value">0.6</span>
+                        <input type="range" id="performance-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                    </label>
+                    <label>
+                        Jitter: <span id="performance-jitter-value">0.5</span>
+                        <input type="range" id="performance-jitter" min="0" max="1" step="0.1" value="0.5">
+                    </label>
+                    <label>
+                        <input type="checkbox" id="performance-mean" checked> Show Mean
+                    </label>
+                    <label>
+                        <input type="checkbox" id="performance-median" checked> Show Median
+                    </label>
+                </div>
+                <div class="controls-legend">
+                    <div class="legend-item">
+                        <div class="legend-line mean-line"></div>
+                        <span>Mean</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line median-line"></div>
+                        <span>Median</span>
+                    </div>
+                </div>
             </div>
             
             <div class="chart-container">
@@ -346,20 +386,32 @@ document.getElementById('performance-chart').appendChild(chart);</code></pre>
             <p>Response time patterns across weekdays. Shows how performance varies throughout the week, with Friday showing more variable performance.</p>
             
             <div class="controls">
-                <label>
-                    Opacity: <span id="response-opacity-value">0.6</span>
-                    <input type="range" id="response-opacity" min="0.1" max="1" step="0.1" value="0.6">
-                </label>
-                <label>
-                    Jitter: <span id="response-jitter-value">0.5</span>
-                    <input type="range" id="response-jitter" min="0" max="1" step="0.1" value="0.5">
-                </label>
-                <label>
-                    <input type="checkbox" id="response-mean" checked> Show Mean
-                </label>
-                <label>
-                    <input type="checkbox" id="response-median" checked> Show Median
-                </label>
+                <div class="controls-left">
+                    <label>
+                        Opacity: <span id="response-opacity-value">0.6</span>
+                        <input type="range" id="response-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                    </label>
+                    <label>
+                        Jitter: <span id="response-jitter-value">0.5</span>
+                        <input type="range" id="response-jitter" min="0" max="1" step="0.1" value="0.5">
+                    </label>
+                    <label>
+                        <input type="checkbox" id="response-mean" checked> Show Mean
+                    </label>
+                    <label>
+                        <input type="checkbox" id="response-median" checked> Show Median
+                    </label>
+                </div>
+                <div class="controls-legend">
+                    <div class="legend-item">
+                        <div class="legend-line mean-line"></div>
+                        <span>Mean</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line median-line"></div>
+                        <span>Median</span>
+                    </div>
+                </div>
             </div>
             
             <div class="chart-container">
@@ -395,20 +447,32 @@ document.getElementById('response-chart').appendChild(chart);</code></pre>
             <p>The same data can be displayed vertically for different layout needs. This example shows sales performance by region.</p>
             
             <div class="controls">
-                <label>
-                    Opacity: <span id="vertical-opacity-value">0.6</span>
-                    <input type="range" id="vertical-opacity" min="0.1" max="1" step="0.1" value="0.6">
-                </label>
-                <label>
-                    Jitter: <span id="vertical-jitter-value">0.5</span>
-                    <input type="range" id="vertical-jitter" min="0" max="1" step="0.1" value="0.5">
-                </label>
-                <label>
-                    <input type="checkbox" id="vertical-mean" checked> Show Mean
-                </label>
-                <label>
-                    <input type="checkbox" id="vertical-median" checked> Show Median
-                </label>
+                <div class="controls-left">
+                    <label>
+                        Opacity: <span id="vertical-opacity-value">0.6</span>
+                        <input type="range" id="vertical-opacity" min="0.1" max="1" step="0.1" value="0.6">
+                    </label>
+                    <label>
+                        Jitter: <span id="vertical-jitter-value">0.5</span>
+                        <input type="range" id="vertical-jitter" min="0" max="1" step="0.1" value="0.5">
+                    </label>
+                    <label>
+                        <input type="checkbox" id="vertical-mean" checked> Show Mean
+                    </label>
+                    <label>
+                        <input type="checkbox" id="vertical-median" checked> Show Median
+                    </label>
+                </div>
+                <div class="controls-legend">
+                    <div class="legend-item">
+                        <div class="legend-line mean-line"></div>
+                        <span>Mean</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line median-line"></div>
+                        <span>Median</span>
+                    </div>
+                </div>
             </div>
             
             <div class="chart-container">
