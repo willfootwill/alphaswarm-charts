@@ -1,11 +1,11 @@
-# Footswarm Charts
+# Alphaswarm Charts
 
-A JavaScript library for creating **footswarm charts** - distribution visualizations that show individual data points with statistical overlays and jittering to prevent overlap.
+A JavaScript library for creating **alphaswarm charts** - distribution visualizations that show individual data points with statistical overlays and jittering to prevent overlap.
 
-Footswarm charts combine the benefits of scatter plots (showing individual data points) with the statistical insights of box plots (showing distribution summaries), making them ideal for exploring distributions while maintaining visibility of individual observations.
+Alphaswarm charts combine the benefits of scatter plots (showing individual data points) with the statistical insights of box plots (showing distribution summaries), making them ideal for exploring distributions while maintaining visibility of individual observations.
 
 
-![Footswarm Chart Example](https://willfootwill.github.io/index.html)
+![Alphaswarm Chart Example](https://willfootwill.github.io/index.html)
 
 ## Features
 
@@ -18,9 +18,9 @@ Footswarm charts combine the benefits of scatter plots (showing individual data 
 - 🔧 **Easy integration** - Works with Observable Plot and D3.js
 - 📚 **Rich examples** - Comprehensive documentation with real-world use cases
 
-## When to Use Footswarm Charts
+## When to Use Alphaswarm Charts
 
-Footswarm charts are particularly useful when you want to:
+Alphaswarm charts are particularly useful when you want to:
 
 - **Explore distributions** while seeing individual data points
 - **Compare groups** with different sample sizes
@@ -33,7 +33,7 @@ Footswarm charts are particularly useful when you want to:
 
 | Chart Type | Individual Points | Distribution Shape | Statistical Summary | Outlier Detection |
 |------------|------------------|-------------------|-------------------|------------------|
-| **Footswarm** | ✅ | ✅ | ✅ | ✅ |
+| **Alphaswarm** | ✅ | ✅ | ✅ | ✅ |
 | Box Plot | ❌ | ⚠️ | ✅ | ✅ |
 | Histogram | ❌ | ✅ | ⚠️ | ❌ |
 | Scatter Plot | ✅ | ❌ | ❌ | ✅ |
@@ -44,21 +44,21 @@ Footswarm charts are particularly useful when you want to:
 ### Installation
 
 ```bash
-npm install footswarm-charts
+npm install alphaswarm-charts
 ```
 
 Or include via CDN:
 
 ```html
 <script type="module">
-  import { createFootswarmChart } from 'https://unpkg.com/footswarm-charts/src/footswarm.js';
+  import { createAlphaswarmChart } from 'https://unpkg.com/alphaswarm-charts/src/alphaswarm.js';
 </script>
 ```
 
 ### Basic Usage
 
 ```javascript
-import { createFootswarmChart } from 'footswarm-charts';
+import { createAlphaswarmChart } from 'alphaswarm-charts';
 
 // Your data
 const data = [
@@ -71,7 +71,7 @@ const data = [
 ];
 
 // Create chart
-const chart = createFootswarmChart(data, {
+const chart = createAlphaswarmChart(data, {
   x: 'value',
   y: 'category',
   xLabel: 'Values',
@@ -84,9 +84,9 @@ document.getElementById('chart-container').appendChild(chart);
 
 ## API Reference
 
-### `createFootswarmChart(data, options)`
+### `createAlphaswarmChart(data, options)`
 
-Creates a horizontal footswarm chart.
+Creates a horizontal alphaswarm chart.
 
 #### Parameters
 
@@ -114,9 +114,9 @@ Creates a horizontal footswarm chart.
 | `xDomain` | Array | `null` | X-axis domain `[min, max]` |
 | `title` | string | `null` | Chart title |
 
-### `createVerticalFootswarmChart(data, options)`
+### `createVerticalAlphaswarmChart(data, options)`
 
-Creates a vertical footswarm chart with similar options but swapped axes.
+Creates a vertical alphaswarm chart with similar options but swapped axes.
 
 ### `calculateStats(values)`
 
@@ -145,7 +145,7 @@ Generate jittered coordinates for data points.
 ### 1. Meeting Time Analysis
 
 ```javascript
-import { createFootswarmChart } from 'footswarm-charts';
+import { createAlphaswarmChart } from 'alphaswarm-charts';
 
 const meetingData = [
   { level: 'L1', hours: 1.2 },
@@ -155,7 +155,7 @@ const meetingData = [
   // ... more data
 ];
 
-const chart = createFootswarmChart(meetingData, {
+const chart = createAlphaswarmChart(meetingData, {
   x: 'hours',
   y: 'level',
   xLabel: 'Daily Meeting Hours',
@@ -175,7 +175,7 @@ const performanceData = [
   // ... more data
 ];
 
-const chart = createFootswarmChart(performanceData, {
+const chart = createAlphaswarmChart(performanceData, {
   x: 'score',
   y: 'team',
   xLabel: 'Performance Score',
@@ -189,9 +189,9 @@ const chart = createFootswarmChart(performanceData, {
 ### 3. Vertical Layout
 
 ```javascript
-import { createVerticalFootswarmChart } from 'footswarm-charts';
+import { createVerticalAlphaswarmChart } from 'alphaswarm-charts';
 
-const chart = createVerticalFootswarmChart(salesData, {
+const chart = createVerticalAlphaswarmChart(salesData, {
   x: 'region',
   y: 'sales',
   xLabel: 'Region',
@@ -206,7 +206,7 @@ const chart = createVerticalFootswarmChart(salesData, {
 The library includes utilities for creating interactive controls:
 
 ```javascript
-import { createControls } from 'footswarm-charts';
+import { createControls } from 'alphaswarm-charts';
 
 const { controls, state } = createControls({
   showOpacityControl: true,
@@ -290,8 +290,8 @@ Requires ES6 module support.
 ## Development Setup
 
 ```bash
-git clone https://github.com/yourusername/footswarm-charts.git
-cd footswarm-charts
+git clone https://github.com/yourusername/alphaswarm-charts.git
+cd alphaswarm-charts
 npm install
 npm run dev
 ```
@@ -314,9 +314,9 @@ This library was inspired by:
 If you use this library in academic work, please cite:
 
 ```bibtex
-@software{footswarm_charts,
-  title={Footswarm Charts: Distribution Visualizations with Individual Data Point Visibility},
+@software{alphaswarm_charts,
+  title={Alphaswarm Charts: Distribution Visualizations with Individual Data Point Visibility},
   author={Will Foot},
   year={2025},
-  url={https://github.com/willfootwill/footswarm-charts}
+  url={https://github.com/willfootwill/alphaswarm-charts}
 }

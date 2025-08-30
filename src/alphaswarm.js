@@ -1,7 +1,7 @@
 /**
- * Footswarm Charts Library
+ * Alphaswarm Charts Library
  * 
- * A JavaScript library for creating footswarm charts - distribution visualizations
+ * A JavaScript library for creating alphaswarm charts - distribution visualizations
  * that show individual data points with statistical overlays and jittering to prevent overlap.
  * 
  * Based on Observable Plot and inspired by swarm plots and beeswarm charts.
@@ -84,12 +84,12 @@ export function generateJitter(count, jitter = 0.5, method = 'random', seed = 12
 }
 
 /**
- * Create a horizontal footswarm chart
+ * Create a horizontal alphaswarm chart
  * @param {Array} data - Array of data objects
  * @param {Object} options - Configuration options
  * @returns {Object} Observable Plot object
  */
-export function createFootswarmChart(data, options = {}) {
+export function createAlphaswarmChart(data, options = {}) {
     try {
         const {
             x = "value",                    // x-axis field name
@@ -221,18 +221,18 @@ export function createFootswarmChart(data, options = {}) {
         return plot;
         
     } catch (error) {
-        console.error('❌ Error in createFootswarmChart:', error);
+        console.error('❌ Error in createAlphaswarmChart:', error);
         throw error;
     }
 }
 
 /**
- * Create a vertical footswarm chart
+ * Create a vertical alphaswarm chart
  * @param {Array} data - Array of data objects
  * @param {Object} options - Configuration options
  * @returns {Object} Observable Plot object
  */
-export function createVerticalFootswarmChart(data, options = {}) {
+export function createVerticalAlphaswarmChart(data, options = {}) {
     try {
         const {
             x = "category",                 // x-axis field name (for grouping)
@@ -364,13 +364,13 @@ export function createVerticalFootswarmChart(data, options = {}) {
         return plot;
         
     } catch (error) {
-        console.error('❌ Error in createVerticalFootswarmChart:', error);
+        console.error('❌ Error in createVerticalAlphaswarmChart:', error);
         throw error;
     }
 }
 
 /**
- * Create interactive controls for footswarm charts
+ * Create interactive controls for alphaswarm charts
  * @param {Object} options - Control options
  * @returns {Object} Object containing control elements and state
  */
@@ -459,8 +459,8 @@ export function createControls(options = {}) {
 
 // Export default object with all functions
 export default {
-    createFootswarmChart,
-    createVerticalFootswarmChart,
+    createAlphaswarmChart,
+    createVerticalAlphaswarmChart,
     calculateStats,
     generateJitter,
     createControls

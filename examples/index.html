@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footswarm Charts - Examples</title>
+    <title>Alphaswarm Charts - Examples</title>
     <script type="module">
         // Import and make Observable Plot and D3 available globally
         import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
@@ -176,7 +176,7 @@
             </ul>
         </nav>
         
-        <h1>Footswarm Charts</h1>
+        <h1>Alphaswarm Charts</h1>
         <p class="subtitle">Distribution visualizations that show individual data points with statistical overlays</p>
         
         <div class="legend">
@@ -193,7 +193,7 @@
         <!-- Simple Example -->
         <div id="simple" class="example-section">
             <h2>1. Simple Example - Getting Started</h2>
-            <p>A basic footswarm chart showing three groups with different distributions. Perfect for understanding the fundamentals.</p>
+            <p>A basic alphaswarm chart showing three groups with different distributions. Perfect for understanding the fundamentals.</p>
             
             <div class="controls">
                 <label>
@@ -220,10 +220,10 @@
             
             <div class="code-example">
                 <h4>Example Code:</h4>
-                <pre><code>import { createFootswarmChart } from './src/footswarm.js';
+                <pre><code>import { createAlphaswarmChart } from './src/alphaswarm.js';
 import { simpleData } from './data/sample-datasets.js';
 
-const chart = createFootswarmChart(simpleData, {
+const chart = createAlphaswarmChart(simpleData, {
     x: 'value',
     y: 'category',
     xLabel: 'Value',
@@ -268,10 +268,10 @@ document.getElementById('chart-container').appendChild(chart);</code></pre>
             
             <div class="code-example">
                 <h4>Example Code:</h4>
-                <pre><code>import { createFootswarmChart } from './src/footswarm.js';
+                <pre><code>import { createAlphaswarmChart } from './src/alphaswarm.js';
 import { meetingData } from './data/sample-datasets.js';
 
-const chart = createFootswarmChart(meetingData, {
+const chart = createAlphaswarmChart(meetingData, {
     x: 'hours',
     y: 'level',
     xLabel: 'Daily Meeting Hours',
@@ -317,10 +317,10 @@ document.getElementById('meeting-chart').appendChild(chart);</code></pre>
             
             <div class="code-example">
                 <h4>Example Code:</h4>
-                <pre><code>import { createFootswarmChart } from './src/footswarm.js';
+                <pre><code>import { createAlphaswarmChart } from './src/alphaswarm.js';
 import { performanceData } from './data/sample-datasets.js';
 
-const chart = createFootswarmChart(performanceData, {
+const chart = createAlphaswarmChart(performanceData, {
     x: 'score',
     y: 'team',
     xLabel: 'Performance Score',
@@ -366,10 +366,10 @@ document.getElementById('performance-chart').appendChild(chart);</code></pre>
             
             <div class="code-example">
                 <h4>Example Code:</h4>
-                <pre><code>import { createFootswarmChart } from './src/footswarm.js';
+                <pre><code>import { createAlphaswarmChart } from './src/alphaswarm.js';
 import { responseData } from './data/sample-datasets.js';
 
-const chart = createFootswarmChart(responseData, {
+const chart = createAlphaswarmChart(responseData, {
     x: 'time',
     y: 'day',
     xLabel: 'Response Time (ms)',
@@ -387,7 +387,7 @@ document.getElementById('response-chart').appendChild(chart);</code></pre>
         
         <!-- Vertical Charts -->
         <div id="vertical" class="example-section">
-            <h2>5. Vertical Footswarm Charts</h2>
+            <h2>5. Vertical Alphaswarm Charts</h2>
             <p>The same data can be displayed vertically for different layout needs. This example shows sales performance by region.</p>
             
             <div class="controls">
@@ -415,10 +415,10 @@ document.getElementById('response-chart').appendChild(chart);</code></pre>
             
             <div class="code-example">
                 <h4>Example Code:</h4>
-                <pre><code>import { createVerticalFootswarmChart } from './src/footswarm.js';
+                <pre><code>import { createVerticalAlphaswarmChart } from './src/alphaswarm.js';
 import { salesData } from './data/sample-datasets.js';
 
-const chart = createVerticalFootswarmChart(salesData, {
+const chart = createVerticalAlphaswarmChart(salesData, {
     x: 'region',
     y: 'revenue',
     xLabel: 'Region',

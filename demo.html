@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footswarm Charts - Quick Demo</title>
+    <title>Alphaswarm Charts - Quick Demo</title>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
     <style>
@@ -87,7 +87,7 @@
     <div class="demo-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0; color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Example: Test Scores by Subject</h2>
-            <a href="https://github.com/willfootwill/footswarm-charts" 
+            <a href="https://github.com/willfootwill/alphaswarm-charts" 
                style="text-decoration: none; color: #3498db; font-weight: 500; font-size: 14px; display: flex; align-items: center; gap: 5px;"
                target="_blank">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -189,7 +189,7 @@
             })
         ];
         
-        // Simple footswarm chart implementation for demo
+        // Simple alphaswarm chart implementation for demo
         function calculateStats(values) {
             if (!values || values.length === 0) {
                 return { mean: 0, median: 0, min: 0, max: 0, count: 0 };
@@ -212,7 +212,7 @@
             };
         }
         
-        function createFootswarmChart(data, options = {}) {
+        function createAlphaswarmChart(data, options = {}) {
             const {
                 x = "value",
                 y = "category",
@@ -390,7 +390,7 @@
             document.getElementById('chart').innerHTML = '';
             
             // Create new chart
-            currentChart = createFootswarmChart(testScores, {
+            currentChart = createAlphaswarmChart(testScores, {
                 x: 'score',
                 y: 'class',
                 xLabel: 'Test Score',

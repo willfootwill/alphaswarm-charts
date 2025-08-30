@@ -1,10 +1,10 @@
-# Footswarm Charts Tutorial
+# Alphaswarm Charts Tutorial
 
-This tutorial will walk you through creating your first footswarm chart and understanding the key concepts.
+This tutorial will walk you through creating your first alphaswarm chart and understanding the key concepts.
 
-## What is a Footswarm Chart?
+## What is an Alphaswarm Chart?
 
-A footswarm chart is a data visualization that shows:
+An alphaswarm chart is a data visualization that shows:
 - **Individual data points** as dots
 - **Distribution shape** through the spread of points
 - **Statistical summaries** with mean and median lines
@@ -43,9 +43,9 @@ const testScores = [
 ### Step 2: Create the Chart
 
 ```javascript
-import { createFootswarmChart } from 'footswarm-charts';
+import { createAlphaswarmChart } from 'alphaswarm-charts';
 
-const chart = createFootswarmChart(testScores, {
+const chart = createAlphaswarmChart(testScores, {
   x: 'score',           // The numeric values
   y: 'class',           // The categories
   xLabel: 'Test Score',
@@ -71,7 +71,7 @@ Let's make the chart more visually appealing and informative.
 ### Adding Colors and Styling
 
 ```javascript
-const chart = createFootswarmChart(testScores, {
+const chart = createAlphaswarmChart(testScores, {
   x: 'score',
   y: 'class',
   xLabel: 'Test Score',
@@ -100,7 +100,7 @@ const chart = createFootswarmChart(testScores, {
 If you have many overlapping points, adjust the jitter:
 
 ```javascript
-const chart = createFootswarmChart(testScores, {
+const chart = createAlphaswarmChart(testScores, {
   x: 'score',
   y: 'class',
   jitter: 0.8,              // More spread (0-1)
@@ -145,7 +145,7 @@ const meetingData = [
 ### Creating the Chart
 
 ```javascript
-const meetingChart = createFootswarmChart(meetingData, {
+const meetingChart = createAlphaswarmChart(meetingData, {
   x: 'hours',
   y: 'level',
   xLabel: 'Daily Meeting Hours',
@@ -172,7 +172,7 @@ const meetingChart = createFootswarmChart(meetingData, {
 
 ### What This Reveals
 
-The footswarm chart will show:
+The alphaswarm chart will show:
 1. **Individual patterns**: Each developer's meeting load
 2. **Level trends**: Higher levels generally have more meetings
 3. **Variability**: Some levels have more consistent meeting loads
@@ -227,7 +227,7 @@ function updateChart() {
   document.getElementById('chart-container').innerHTML = '';
   
   // Create new chart
-  currentChart = createFootswarmChart(meetingData, {
+  currentChart = createAlphaswarmChart(meetingData, {
     x: 'hours',
     y: 'level',
     xLabel: 'Daily Meeting Hours',
@@ -257,7 +257,7 @@ updateChart();
 Sometimes a vertical layout works better:
 
 ```javascript
-import { createVerticalFootswarmChart } from 'footswarm-charts';
+import { createVerticalAlphaswarmChart } from 'alphaswarm-charts';
 
 const salesData = [
   { region: 'North', sales: 150000 },
@@ -267,7 +267,7 @@ const salesData = [
   // ... more data
 ];
 
-const verticalChart = createVerticalFootswarmChart(salesData, {
+const verticalChart = createVerticalAlphaswarmChart(salesData, {
   x: 'region',      // Categories on x-axis
   y: 'sales',       // Values on y-axis
   xLabel: 'Region',
@@ -316,7 +316,7 @@ function createResponsiveChart(data, containerId) {
   const container = document.getElementById(containerId);
   const width = Math.min(800, container.clientWidth - 40);
   
-  return createFootswarmChart(data, {
+  return createAlphaswarmChart(data, {
     x: 'value',
     y: 'category',
     width: width,

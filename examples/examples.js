@@ -1,12 +1,12 @@
 /**
- * Interactive examples for footswarm charts
+ * Interactive examples for alphaswarm charts
  */
 
 // Add error handling for imports
-let footswarmModule, dataModule;
+let alphaswarmModule, dataModule;
 
 try {
-    footswarmModule = await import('../src/footswarm.js');
+    alphaswarmModule = await import('../src/alphaswarm.js');
     dataModule = await import('../data/sample-datasets.js');
     console.log('✅ Modules loaded successfully');
 } catch (error) {
@@ -19,7 +19,7 @@ try {
     throw error;
 }
 
-const { createFootswarmChart, createVerticalFootswarmChart, calculateStats } = footswarmModule;
+const { createAlphaswarmChart, createVerticalAlphaswarmChart, calculateStats } = alphaswarmModule;
 const { 
     simpleData, 
     meetingTimeData, 
@@ -120,7 +120,7 @@ function setupControls(prefix, data, valueField, categoryField, chartType = 'hor
             // Use a deterministic seed based on category to ensure consistent jitter
             const seed = 12345 + categoryIndex * 1000;
             
-            // Generate jitter coordinates using the same logic as in footswarm.js
+            // Generate jitter coordinates using the same logic as in alphaswarm.js
             const jitterCoords = [];
             const seededRandom = window.d3.randomLcg(seed);
             for (let i = 0; i < categoryData.length; i++) {
@@ -197,9 +197,9 @@ function setupControls(prefix, data, valueField, categoryField, chartType = 'hor
             // Create new chart
             let chart;
             if (chartType === 'vertical') {
-                chart = createVerticalFootswarmChart(data, options);
+                chart = createVerticalAlphaswarmChart(data, options);
             } else {
-                chart = createFootswarmChart(data, options);
+                chart = createAlphaswarmChart(data, options);
             }
             
             chartContainer.appendChild(chart);

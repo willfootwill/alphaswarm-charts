@@ -1,8 +1,8 @@
 {
-  "name": "footswarm-charts",
+  "name": "alphaswarm-charts",
   "version": "1.0.0",
-  "description": "A JavaScript library for creating footswarm charts - distribution visualizations that show individual data points with statistical overlays",
-  "main": "src/footswarm.js",
+  "description": "A JavaScript library for creating alphaswarm charts - distribution visualizations that show individual data points with statistical overlays",
+  "main": "src/alphaswarm.js",
   "type": "module",
   "scripts": {
     "dev": "python3 -m http.server 8000",
@@ -17,7 +17,7 @@
     "d3",
     "observable-plot",
     "swarm-plot",
-    "footswarm"
+    "alphaswarm"
   ],
   "author": "Your Name",
   "license": "MIT",
@@ -30,10 +30,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/willfootwill/footswarm-charts.git"
+    "url": "https://github.com/willfootwill/alphaswarm-charts.git"
   },
   "bugs": {
-    "url": "https://github.com/willfootwill/footswarm-charts/issues"
+    "url": "https://github.com/willfootwill/alphaswarm-charts/issues"
   },
-  "homepage": "https://github.com/willfootwill/footswarm-charts#readme"
+  "homepage": "https://github.com/willfootwill/alphaswarm-charts#readme"
 }
