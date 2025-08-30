@@ -5,7 +5,7 @@ A JavaScript library for creating **alphaswarm charts** - distribution visualiza
 Alphaswarm charts combine the benefits of scatter plots (showing individual data points) with the statistical insights of box plots (showing distribution summaries), making them ideal for exploring distributions while maintaining visibility of individual observations.
 
 
-![Alphaswarm Chart Example](https://willfootwill.github.io/index.html)
+![Alphaswarm Chart Example](https://willfootwill.github.io/alphaswarm-charts/demo.html)
 
 ## Features
 
@@ -290,7 +290,7 @@ Requires ES6 module support.
 ## Development Setup
 
 ```bash
-git clone https://github.com/yourusername/alphaswarm-charts.git
+git clone https://github.com/willfootwill/alphaswarm-charts.git
 cd alphaswarm-charts
 npm install
 npm run dev
